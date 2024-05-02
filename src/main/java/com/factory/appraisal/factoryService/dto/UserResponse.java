@@ -1,0 +1,18 @@
+package com.factory.appraisal.factoryService.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class UserResponse {
+    private String id;
+    private String userName;
+}
