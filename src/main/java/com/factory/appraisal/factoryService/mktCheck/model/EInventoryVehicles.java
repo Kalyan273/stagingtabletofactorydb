@@ -1,9 +1,11 @@
 package com.factory.appraisal.factoryService.mktCheck.model;
 
+import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -16,7 +18,8 @@ import javax.persistence.*;
 @Setter
 public class EInventoryVehicles {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_inventory_id_seq")
+    @GenericGenerator(name = "mkt_inventory_id_seq", strategy= AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
 
     //vinInfo

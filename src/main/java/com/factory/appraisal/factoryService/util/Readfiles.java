@@ -27,7 +27,7 @@ public class Readfiles {
 
 
        // Resource resource = new PathResource("C:\\Users\\Massil\\Downloads\\florida cities list.xlsx");
-        Resource resource =  resourceLoader.getResource("classpath:florida_cities_list.xlsx.jrxml");
+        Resource resource =  resourceLoader.getResource("classpath:Book1.xlsx");
 
 
         List<String> columnValues = new ArrayList<>();

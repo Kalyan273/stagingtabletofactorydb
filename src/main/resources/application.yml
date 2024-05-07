@@ -2,25 +2,25 @@ server:
   port: 8082
 
 log-path: /opt/tomcat/customlogs/
-market_check_url: http://api.marketcheck.com/v2/decode/car/neovin/
-market_check_dealer_url: http://marketcheck-prod.apigee.net/v2/dealers/car?
-market_check_inventory_url: http://api.marketcheck.com/v2/car/dealer/inventory/active?
+market_check_url: http://mc-api.marketcheck.com/v2/decode/car/neovin/
+market_check_dealer_url: https://mc-api.marketcheck.com/v2/dealers/car?
+market_check_inventory_url: http://mc-api.marketcheck.com/v2/car/dealer/inventory/active?
 market_check_dealer_url_suffix: state=FL&rows=500&country=US
 market_check_inv_url_suffix: car_type=used&owned=true
 market_check_url_suffix: /specs?
 api_key: api_key=hTUx9slxqOdFy4WQG7CRTuAIvC38A5mJ
-host : marketcheck-prod.apigee.net
-identityServer_userCreation: https://is.keyassure.live/t/carbon.super/scim2/
+host : mc-api.marketcheck.com
+identityServer_userCreation: https://is-test.keyassure.live/t/carbon.super/scim2/
 #paramValue:  d80b419f-5dc4-4a8d-99e7-02254be9f43b
-paramValue: ff9562ca-d4df-4754-abe1-847c81814b00
+paramValue: 3be77329-6d2d-4a72-a6a1-a6fbb02d0809
 access_key: IJNKK0VI1KN7268AVRH2
 secret : q4M7yWvLhpkpIameiiMB6PmmphcEjACOUAbv1oBs
-amazonS3_url : dal-storage.hostwinds.net/keyassure/
-image_folder_path: /home/factory/images/
+amazonS3_url : dal-storage.hostwinds.net/keyassure-test/
+image_folder_path: images
 #video_folder_path: /home/factory/videos/
 #properties_path : /home/factory/properties/
 #image_folder_path: C:/myimage/
-video_folder_path: C:/myVideo/
+video_folder_path: videos
 file_size: 100000000
 odometer_template_path: src\\main\\resources\\odometer.jrxml
 vehBill_template_path: src\\main\\resources\\Template.html
@@ -35,10 +35,10 @@ spring:
 #  profiles:
 #  active: dev
   datasource:
-    url: jdbc:postgresql://142.11.201.154:5438/keyassure
+    url: jdbc:postgresql://hwsrv-1076442.hostwindsdns.com:5438/keyassure
     driver-class-name: org.postgresql.Driver
     username: keyassureadmin
-    password: G33vR1776Hbj
+    password: HxH50y8rpp$j
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     hibernate:
