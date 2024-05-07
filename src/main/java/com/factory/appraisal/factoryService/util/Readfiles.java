@@ -27,7 +27,8 @@ public class Readfiles {
 
 
        // Resource resource = new PathResource("C:\\Users\\Massil\\Downloads\\florida cities list.xlsx");
-        Resource resource =  resourceLoader.getResource("classpath:Book1.xlsx");
+        //Resource resource =  resourceLoader.getResource("classpath:Book1.xlsx");
+        Resource resource =  resourceLoader.getResource("classpath:Cities_List.xlsx");
 
 
         List<String> columnValues = new ArrayList<>();
@@ -37,7 +38,9 @@ public class Readfiles {
             Sheet sheet = workbook.getSheetAt(0); // Assuming the first sheet is the one to be processed
 
             Iterator<Row> rowIterator = sheet.iterator();
+            rowIterator.next();
             while (rowIterator.hasNext()) {
+
                 Row row = rowIterator.next();
                 Cell cell = row.getCell(0); // Assuming the first column is the one to be extracted
 

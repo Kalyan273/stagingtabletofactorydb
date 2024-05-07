@@ -14,8 +14,10 @@ import com.factory.appraisal.factoryService.dto.ApprCreaPage;
 import com.factory.appraisal.factoryService.dto.DealerRegistration;
 import com.factory.appraisal.factoryService.dto.MktDealer;
 import com.factory.appraisal.factoryService.dto.MktInventory;
+import com.factory.appraisal.factoryService.mktCheck.model.ECities;
 import com.factory.appraisal.factoryService.mktCheck.model.EInventoryVehicles;
 import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration;
+import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
@@ -107,6 +109,8 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     private UserRegistrationRepo userRepo;
     @Autowired
     private ConfigCodesRepo configCodesRepo;
+    @Autowired
+    private FlCitiesRepo flCitiesRepo;
 
 
     @Transactional
@@ -135,6 +139,21 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     }
 
+
+    @Override
+    @Transactional
+    public void saveCitiesInFl() throws IOException {
+        List<String> cites = readfiles.processExcelFile();
+        List<ECities> eCities=new ArrayList<>();
+
+        for (String city : cites) {
+
+            eCities.add(new ECities(city));
+        }
+
+        flCitiesRepo.saveAll(eCities);
+
+    }
 
     @Override
     public void saveMarketCheckDealer(String city) throws WebClientResponseException {

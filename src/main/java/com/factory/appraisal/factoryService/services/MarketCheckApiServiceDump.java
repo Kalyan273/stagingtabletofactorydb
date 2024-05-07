@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 public interface MarketCheckApiServiceDump {
+
+    void saveCitiesInFl() throws IOException;
     void saveMarketCheckDealer(String city) throws WebClientResponseException;
   //  public void saveMarketCheckInv(Long mktDealerID, Set<String> newExtColor, Set<String> newIntColor) throws WebClientResponseException, AppraisalException, IOException;
      void getAllDealersInFlorida() throws IOException;

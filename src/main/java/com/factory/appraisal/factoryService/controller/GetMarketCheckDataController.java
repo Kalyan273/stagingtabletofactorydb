@@ -22,6 +22,17 @@ public class GetMarketCheckDataController {
     @Autowired
     private MarketCheckApiServiceDump service;
 
+    @ApiOperation(value = "This method is used to save cities in DB from a file")
+    @PostMapping("/saveCitiesInDB")
+    public ResponseEntity<Response> saveCitiesInDB() throws IOException {
+
+        service.saveCitiesInFl();
+        Response response=new Response();
+        response.setMessage("data added successfully");
+        response.setCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+    }
+
     @ApiOperation(value = "This method is used to get dealer from marketCheck")
     @PostMapping("/getdealers")
     public ResponseEntity<Response> addDealer() throws IOException {
