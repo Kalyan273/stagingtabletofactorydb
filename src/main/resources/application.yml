@@ -87,6 +87,13 @@ management:
         exclude: "env,beans"
 
 
+org:
+  jobrunr:
+    background-job-server:
+      enabled: true
+    dashboard:
+      enabled: true
+
 
 swagger:
   enable: true

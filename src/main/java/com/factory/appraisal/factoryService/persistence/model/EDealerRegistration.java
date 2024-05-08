@@ -46,7 +46,7 @@ public class EDealerRegistration extends TransactionEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEALER_REG_SEQ")
     @GenericGenerator(name = "DEALER_REG_SEQ", strategy=AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
-//    private Long mkDealerId;
+    private Long mkDealerId;
     private String name;
     private String firstName;
     private String lastName;
@@ -86,6 +86,8 @@ public class EDealerRegistration extends TransactionEntity {
     private String corporationName;
     private String dealerCert;
     private String status;
+    @Column(name = "factory_non_dealer")
+    private Boolean factoryMember;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = ECompany.class, fetch = FetchType.LAZY)
