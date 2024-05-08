@@ -195,10 +195,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                 if (null == dealerByMktId) {
                     dealerReg.setMkDealerId(dealerInfo.get(AppraisalConstants.ID).toString());
                     dealerReg.setSellerName(null != dealerInfo.get(AppraisalConstants.SELLER_NAME) ? dealerInfo.get(AppraisalConstants.SELLER_NAME).toString() : null);
-                    dealerReg.setInventoryUrl(null != dealerInfo.get(AppraisalConstants.INVENTORY_URL) ? dealerInfo.get(AppraisalConstants.INVENTORY_URL).toString() : null);
-                    dealerReg.setDataSource(null != dealerInfo.get(AppraisalConstants.DATA_SOURCE) ? dealerInfo.get(AppraisalConstants.DATA_SOURCE).toString() : null);
-                    dealerReg.setStatus(null != dealerInfo.get(AppraisalConstants.STATUS) ? dealerInfo.get(AppraisalConstants.STATUS).toString() : null);
-                    dealerReg.setListingCount(null != dealerInfo.get(AppraisalConstants.LISTING_COUNT) ? dealerInfo.get(AppraisalConstants.LISTING_COUNT).toString() : null);
+                    dealerReg.setWebsite(null != dealerInfo.get(AppraisalConstants.WEBSITE_URL) ? dealerInfo.get(AppraisalConstants.WEBSITE_URL).toString() : null);
                     dealerReg.setDealerType(null != dealerInfo.get(AppraisalConstants.DEALER_TYPE) ? dealerInfo.get(AppraisalConstants.DEALER_TYPE).toString() : null);
                     dealerReg.setStreet(null != dealerInfo.get(AppraisalConstants.STREET) ? dealerInfo.get(AppraisalConstants.STREET).toString() : null);
                     dealerReg.setCity(null != dealerInfo.get(AppraisalConstants.CITY) ? dealerInfo.get(AppraisalConstants.CITY).toString() : null);
@@ -207,7 +204,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     dealerReg.setZip(null != dealerInfo.get(AppraisalConstants.ZIP) ? dealerInfo.get(AppraisalConstants.ZIP).toString() : null);
                     dealerReg.setLatitude(null != dealerInfo.get(AppraisalConstants.LATITUDE) ? dealerInfo.get(AppraisalConstants.LATITUDE).toString() : null);
                     dealerReg.setLongitude(null != dealerInfo.get(AppraisalConstants.LONGITUDE) ? dealerInfo.get(AppraisalConstants.LONGITUDE).toString() : null);
-                    dealerReg.setSellerPhone(null != dealerInfo.get(AppraisalConstants.SELLER_PHONE) ? dealerInfo.get(AppraisalConstants.SELLER_PHONE).toString() : null);
+                    dealerReg.setPhone(null != dealerInfo.get(AppraisalConstants.PHONE) ? dealerInfo.get(AppraisalConstants.PHONE).toString() : null);
                     dealerReg.setSellerEmail(null != dealerInfo.get(AppraisalConstants.SELLER_EMAIL) ? dealerInfo.get(AppraisalConstants.SELLER_EMAIL).toString() : null);
                     dealerList.add(dealerReg);
                 }

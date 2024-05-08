@@ -55,7 +55,8 @@ public class EInventoryVehicles extends TransactionEntity{
     private String availabilityStatus;
 
     //dealer this mkDealerID
-    private String mkDealerId;
+    @Column(name = "mk_dealer_id")
+    private String dealerId;
 
     //build
     private Integer year;

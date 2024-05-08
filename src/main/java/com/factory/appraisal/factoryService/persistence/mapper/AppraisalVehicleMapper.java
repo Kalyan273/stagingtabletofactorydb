@@ -858,7 +858,7 @@ public interface AppraisalVehicleMapper {
     @Mapping(source = "sellerName",target = "firstName")
     @Mapping(source = "street",target = "streetAddress")
     @Mapping(source = "zip",target = "zipCode")
-    @Mapping(source = "sellerPhone",target = "phoneNumber")
+    @Mapping(source = "phone",target = "phoneNumber")
     @Mapping(source = "sellerEmail",target = "email")
     @Mapping(target = "name",expression = "java(setUsernameAsUrlPre(mkDealer))")
     @Mapping(target = "password",constant = "Dealer@123")
@@ -900,7 +900,7 @@ public interface AppraisalVehicleMapper {
     List< ApprCreaPage> invToApprCreaPage(List<EInventoryVehicles> inventoryVehicles);
 
     default String setUsernameAsUrlPre(EMkDealerRegistration mkDealer){
-        String[] uName =mkDealer.getInventoryUrl().split("[.]");
+        String[] uName =mkDealer.getWebsite().split("[.]");
         String userName="";
             for (int i=0;i<uName.length-1;i++) {
                 userName+=uName[i];
