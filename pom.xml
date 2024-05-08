@@ -229,8 +229,8 @@
 
 		<dependency>
 			<groupId>org.jobrunr</groupId>
-			<artifactId>jobrunr-spring-boot-starter</artifactId>
-			<version>3.1.2</version>
+			<artifactId>jobrunr-spring-boot-2-starter</artifactId>
+			<version>6.3.3</version>
 		</dependency>
 	</dependencies>
 
