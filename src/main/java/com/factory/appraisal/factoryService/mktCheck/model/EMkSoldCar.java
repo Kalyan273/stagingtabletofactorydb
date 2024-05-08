@@ -1,5 +1,6 @@
 package com.factory.appraisal.factoryService.mktCheck.model;
 
+
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.persistence.model.IdEntity;
 import com.factory.appraisal.factoryService.persistence.model.TransactionEntity;
@@ -13,9 +14,8 @@ import org.hibernate.envers.AuditOverrides;
 
 import javax.persistence.*;
 
-
 @Entity
-@Table(name = "mkt_active_inventory",schema = "marketcheck")
+@Table(name = "mkt_inv_sold_cars",schema = "marketcheck")
 @AuditOverrides({
         @AuditOverride(forClass= TransactionEntity.class, name="createdBy"),
         @AuditOverride(forClass=TransactionEntity.class, name="createdOn"),
@@ -29,12 +29,12 @@ import javax.persistence.*;
 @DynamicInsert
 @Getter
 @Setter
-@AttributeOverride(name = "id", column = @Column(name = "mkt_inv_car_id"))
+@AttributeOverride(name = "id", column = @Column(name = "mkt_sold_car_id"))
 @AttributeOverride(name = "valid", column = @Column(name = "IS_ACTIVE"))
-public class EInventoryVehicles extends TransactionEntity{
+public class EMkSoldCar extends TransactionEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_inventory_id_seq")
-    @GenericGenerator(name = "mkt_inventory_id_seq", strategy= AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_inv_sold_id_seq")
+    @GenericGenerator(name = "mkt_inv_sold_id_seq", strategy= AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
 
     //vinInfo
@@ -55,7 +55,7 @@ public class EInventoryVehicles extends TransactionEntity{
     private String availabilityStatus;
 
     //dealer this mkDealerID
-    private String mkDealerId;
+    private String dealerId;
 
     //build
     private Integer year;
@@ -88,5 +88,4 @@ public class EInventoryVehicles extends TransactionEntity{
     private String vehiclePic7;
     private String vehiclePic8;
     private String vehiclePic9;
-
 }

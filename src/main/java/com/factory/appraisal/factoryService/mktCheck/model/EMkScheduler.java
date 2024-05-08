@@ -1,27 +1,26 @@
 package com.factory.appraisal.factoryService.mktCheck.model;
 
+
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.persistence.model.IdEntity;
 import com.factory.appraisal.factoryService.persistence.model.TransactionEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
-
-/**
- * This is an Entity class  EDealerRegistration
- */
-
+import java.util.Date;
 
 @Entity
-@Table(name = "MKT_DEALER_REG",schema = "marketcheck")
+@Table(name = "mkt_scheduler", schema = "marketcheck")
 @AuditOverrides({
-        @AuditOverride(forClass= TransactionEntity.class, name="createdBy"),
+        @AuditOverride(forClass=TransactionEntity.class, name="createdBy"),
         @AuditOverride(forClass=TransactionEntity.class, name="createdOn"),
         @AuditOverride(forClass=TransactionEntity.class, name="modifiedBy"),
         @AuditOverride(forClass=TransactionEntity.class, name="modifiedOn"),
@@ -33,28 +32,18 @@ import javax.persistence.*;
 @DynamicInsert
 @Getter
 @Setter
-@AttributeOverride(name = "id", column = @Column(name = "dealer_id"))
+@NoArgsConstructor
+@AttributeOverride(name = "id", column = @Column(name = "mkt_scheduler_id"))
 @AttributeOverride(name = "valid", column = @Column(name = "IS_ACTIVE"))
-public class EMkDealerRegistration extends TransactionEntity{
+public class EMkScheduler extends TransactionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_dealer_reg_id_seq")
-    @GenericGenerator(name = "mkt_dealer_reg_id_seq", strategy= AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_scheduler_id_seq")
+    @GenericGenerator(name = "mkt_scheduler_id_seq", strategy = AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
-    private String mkDealerId;
-    private String sellerName;
-    private String website;
-    private String dealerType;
-    private String street;
-    private String city;
-    private String state;
-    private String country;
-    private String zip;
-    private String latitude;
-    private String longitude;
-    private String phone;
-    private String sellerEmail;
-    private String userUuid;
 
+    private Date startDate;
+    private Date endDate;
+    private String event;
 
 }
