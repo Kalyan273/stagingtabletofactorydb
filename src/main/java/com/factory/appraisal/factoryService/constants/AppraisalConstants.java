@@ -361,6 +361,11 @@ public class AppraisalConstants {
     public static final String EXTERIOR_COLOR_MKT="EXTERIOR_COLOR_MKT";
     public static final String INTERIOR_COLOR_MKT= "INTERIOR_COLOR_MKT";
 
+  public static final String EVENT_MKT_DATA_SYNC_TO_FACTORY= "mkt_data_sync_to_factory";
+  public static final String EVENT_KEYASSURE_DB_CLEANUP = "keyassure_db_cleanup ";
+  public static final String EVENT_MARKETCHECK_DB_CLEANUP= "marketcheck_db_cleanup";
+  
+
 
 
 
