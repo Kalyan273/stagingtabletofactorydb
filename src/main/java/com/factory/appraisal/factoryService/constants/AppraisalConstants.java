@@ -8,6 +8,8 @@ package com.factory.appraisal.factoryService.constants;
  */
 public class AppraisalConstants {
 
+  public static final String FIRST_SEEN_RANGE = "first_seen_range=";
+
   private AppraisalConstants() {
   }
     public static final String SEQUENCE_NAME = "mygen";
@@ -316,6 +318,13 @@ public class AppraisalConstants {
     public static final String SELLER_NAME="seller_name";
     public static final String STREET="street";
     public static final String CITY="city";
+  public static final String CAR_TYPE="car_type";
+
+  public static final String USED="used";
+  public static final String START="start";
+  public static final String ROWS="rows";
+
+  public static final String EQUAL="=";
     public static final String STATE="state";
     public static final String ZIP="zip";
     public static final String LATITUDE="latitude";
@@ -364,8 +373,11 @@ public class AppraisalConstants {
   public static final String EVENT_MKT_DATA_SYNC_TO_FACTORY= "mkt_data_sync_to_factory";
   public static final String EVENT_KEYASSURE_DB_CLEANUP = "keyassure_db_cleanup ";
   public static final String EVENT_MARKETCHECK_DB_CLEANUP= "marketcheck_db_cleanup";
-  
 
+  public static String USERNAME="username";
+  public static final String STREETADR = "streetAdr";
+
+  public static String USERCREATON="User Information";
 
 
 

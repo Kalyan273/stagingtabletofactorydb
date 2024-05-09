@@ -32,4 +32,8 @@ public interface RoleMappingRepo extends JpaRepository<ERoleMapping,Long> {
            " where r.user.id=:userId and r.valid=true )and r.valid=true")
     List<UUID> findUsersUnderManager(UUID userId);
 
+
+    @Query(value = "SELECT r FROM ERoleMapping r WHERE (r.role.roleGroup = 'FA') and r.valid=true")
+    List<ERoleMapping> findByRole();
+
 }

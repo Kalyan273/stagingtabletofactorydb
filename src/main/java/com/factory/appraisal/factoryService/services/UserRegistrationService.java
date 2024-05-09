@@ -4,8 +4,11 @@ import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.GlobalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.dto.*;
+import freemarker.template.TemplateException;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +20,7 @@ public interface UserRegistrationService {
      * @return message
      */
 
-    String createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException;
+    Response createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException;
 
 
     /**

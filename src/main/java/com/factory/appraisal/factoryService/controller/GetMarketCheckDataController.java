@@ -44,6 +44,16 @@ public class GetMarketCheckDataController {
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 
+    @ApiOperation(value="save marketCheck inventory and dealer ",response = Response.class)
+    @PostMapping("/saveinvdealers")
+    public ResponseEntity<Response> saveInvAndDlr() throws AppraisalException, IOException {
+        service.getMarketCheckData();
+        Response response=new Response();
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("Inventory vehicles and dealer added successfully");
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
     @ApiOperation(value="save marketCheck inventory ",response = Response.class)
     @PostMapping("/saveMktInv")
     public ResponseEntity<Response> saveMktInv(@RequestParam Long start,@RequestParam Long end) throws AppraisalException, IOException {

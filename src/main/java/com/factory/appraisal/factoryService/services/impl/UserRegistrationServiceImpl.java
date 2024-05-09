@@ -9,6 +9,7 @@ package com.factory.appraisal.factoryService.services.impl;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.GlobalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
+import com.factory.appraisal.factoryService.config.AuditConfiguration;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 
 import com.factory.appraisal.factoryService.dto.*;
@@ -22,6 +23,7 @@ import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleM
 import com.factory.appraisal.factoryService.persistence.model.*;
 import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.UserRegistrationService;
+import freemarker.template.TemplateException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -35,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -67,34 +71,40 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Value("${paramValue}")
     private String paramValue;
 
+    @Autowired
+    private AuditConfiguration auditConfiguration;
+
+    @Autowired
+    private EmailServiceImpl emailService;
+
 
     @Override
-    public String createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException {
+    @Transactional
+    public Response createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException {
         log.info("User Creation method is triggered **Service IMPL**");
-        EUserRegistration eUserRegistration=null;
+        EUserRegistration eUserRegistration = null;
+        auditConfiguration.setAuditorName(userRegistration.getUserName());
         eUserRegistration = appraisalVehicleMapper.userRegisToEUserRegis(userRegistration);
         String value = callTheUrl(eUserRegistration);
-        if(null!=value){
-            if(null!=dealerId && (dealerId>0)) {
+        if (null != value) {
+            if (null != dealerId && (dealerId > 0)) {
                 EDealerRegistration eDealerRegistration = dealerRegistrationRepo.findDealerById(dealerId);
                 if (null != eDealerRegistration) {
                     eUserRegistration.setDealer(eDealerRegistration);
-                }else throw new AppraisalException("Invalid dealer_id");
+                } else throw new AppraisalException("Invalid dealer_id");
             }
             eUserRegistration.setUserName(eUserRegistration.getUserName());
             eUserRegistration.setId(UUID.fromString(value));
             eUserRegistration.setValid(true);
             eUserRegistration.setCreatedOn(new Date());
             EUserRegistration save = userRegistrationRepo.save(eUserRegistration);
-
             ERoleMapping eRoleMapping = new ERoleMapping();
             EUserRegistration manager = userRegistrationRepo.findUserById(userRegistration.getManagerId());
-            EUserRegistration factoryManager =  userRegistrationRepo.findUserById(userRegistration.getFactoryManager());
+            EUserRegistration factoryManager = userRegistrationRepo.findUserById(userRegistration.getFactoryManager());
             EUserRegistration factorySalesman = userRegistrationRepo.findUserById(userRegistration.getFactorySalesman());
             ECompany companyId = compayRepo.findByCompanyId(userRegistration.getCompanyId());
 
-
-            if (null!=userRegistration.getRoleId()) {
+            if (null != userRegistration.getRoleId()) {
                 ERole role = roleRepo.findByRole(userRegistration.getRoleId());
 
                 eRoleMapping.setUser(save);
@@ -103,9 +113,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 eRoleMapping.setCompany(companyId);
                 eRoleMapping.setFactoryManager(factoryManager);
                 eRoleMapping.setFactorySalesman(factorySalesman);
+                eRoleMapping.setDealerAdmin(userRegistration.getDealerAdmin());
                 roleMappingRepo.save(eRoleMapping);
 
-            }else {
+            } else {
                 ERole roleOfPublicUser = roleRepo.findRoleOfPublicUser(AppraisalConstants.P1);
                 eRoleMapping.setUser(save);
                 eRoleMapping.setRole(roleOfPublicUser);
@@ -116,11 +127,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 roleMappingRepo.save(eRoleMapping);
             }
         }
-/*        Response response = new Response();
+        emailService.sendToUser(userRegistration);
+        Response response = new Response();
         response.setCode(HttpStatus.OK.value());
         response.setMessage("User Has Been saved Successfully");
-        response.setStatus(true);*/
-        return value;
+        response.setStatus(true);
+        return response;
     }
 
     public String callTheUrl(EUserRegistration eUserReg){

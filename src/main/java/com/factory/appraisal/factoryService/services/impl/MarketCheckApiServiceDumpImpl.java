@@ -10,10 +10,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
-import com.factory.appraisal.factoryService.dto.ApprCreaPage;
-import com.factory.appraisal.factoryService.dto.DealerRegistration;
-import com.factory.appraisal.factoryService.dto.MktDealer;
-import com.factory.appraisal.factoryService.dto.MktInventory;
+import com.factory.appraisal.factoryService.dto.*;
 import com.factory.appraisal.factoryService.mktCheck.model.ECities;
 import com.factory.appraisal.factoryService.mktCheck.model.EInventoryVehicles;
 import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration;
@@ -50,10 +47,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump {
@@ -144,7 +138,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Transactional
     public void saveCitiesInFl() throws IOException {
         List<String> cites = readfiles.processExcelFile();
-        List<ECities> eCities=new ArrayList<>();
+        List<ECities> eCities = new ArrayList<>();
 
         for (String city : cites) {
 
@@ -321,6 +315,10 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             dlrByMktId.setUserUuid(dealer1);
             dealerRepo.save(dlrByMktId);
         }
+        List<EMkDealerRegistration> dealerWthOutUUID = dealerRepo.findDealerWthOutUUID();
+        List<DealerRegistration> dealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(dealerWthOutUUID);
+
+
 
     }
 
@@ -369,7 +367,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     }
 
     private EInventoryVehicles setBuildParam(LinkedHashMap<?, ?> invInfo, LinkedHashMap<?, ?> build, LinkedHashMap<?, ?> dealer) {
-
+        log.info("setBuildParam started");
         EInventoryVehicles apprvehi = new EInventoryVehicles();
 
         apprvehi.setVin(null != invInfo.get(AppraisalConstants.MKT_VIN) ? invInfo.get(AppraisalConstants.MKT_VIN).toString() : null);
@@ -417,6 +415,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     }
 
     private EInventoryVehicles setMedia(List<String> picList, EInventoryVehicles apprvehi) throws AppraisalException, IOException {
+        log.info("setMedia started");
         if (null != picList && !picList.isEmpty()) {
 
             for (int j = 0; j < picList.size(); j++) {
@@ -594,6 +593,149 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         request.setCannedAcl(CannedAccessControlList.PublicRead);
         s3.putObject(request);
         return fileName;
+    }
+
+
+    @Transactional
+    @Override
+    public void getMarketCheckData() throws IOException, AppraisalException {
+        List<String> cities = flCitiesRepo.getCityNames();
+//        for (String city : cities) {
+//            getInvAndDealer(city);
+//            log.info("{}", city);
+//        }
+        for(int i=0;i<cities.size();i++){
+            if(i==0){
+                getInvAndDealer(cities.get(i));
+                log.info("{}", cities.get(i));
+            }
+        }
+    }
+
+    public void getInvAndDealer(String city) throws AppraisalException, IOException {
+        log.info("getInvAndDealer started");
+        EInventoryVehicles creaPage = null;
+        List<EInventoryVehicles> inventoryVehicles = new ArrayList<>();
+        MktInventory mktInventory = null;
+        List<MktInventory> mktInventoryList = new ArrayList<>();
+        Map<Long, EMkDealerRegistration> mktChkDealers = new HashMap<>();
+
+        //  WebClient webClient = WebClient.create();
+
+        int start = 0;
+        int rows = 50;
+
+        mktInventory = fetchData(city, start, rows);
+        if (null != mktInventory && null != mktInventory.getListings() && !mktInventory.getListings().isEmpty()) {
+            log.info("num of inv:{}", mktInventory.getNoOfInv());
+            mktInventoryList.add(mktInventory);
+        }
+
+        assert mktInventory != null;
+        int numFound = mktInventory.getNoOfInv();
+        int noOfTime;
+        if (numFound % 50 == 0) {
+            noOfTime = (numFound / 50);
+        } else {
+            noOfTime = (numFound / 50) + 1;
+        }
+
+
+        for (int j = 0; j < noOfTime; j++) {
+
+            if (j > 0) {
+                start += rows;
+                mktInventory = fetchData(city, start, rows);
+                if (null != mktInventory && null != mktInventory.getListings() && !mktInventory.getListings().isEmpty()) {
+                    mktInventoryList.add(mktInventory);
+                }
+
+            }
+        }
+
+        if (!mktInventoryList.isEmpty()) {
+
+            for (int i = 0; i < mktInventoryList.size(); i++) {
+
+                List<Object> listings = mktInventoryList.get(i).getListings();
+                for (int a = 0; a < listings.size(); a++) {
+
+                    LinkedHashMap<?, ?> invInfo = (LinkedHashMap<?, ?>) listings.get(a);
+                    LinkedHashMap<?, ?> build = (LinkedHashMap<?, ?>) invInfo.get("build");
+                    LinkedHashMap<?, ?> media = (LinkedHashMap<?, ?>) invInfo.get("media");
+                    LinkedHashMap<?, ?> dealer = (LinkedHashMap<?, ?>) invInfo.get("dealer");
+
+
+                    creaPage = setBuildParam(invInfo, build, dealer);
+                    if (null != media) {
+                        List<String> picList = (List<String>) media.get("photo_links_cached");
+
+                        creaPage = setMedia(picList, creaPage);
+                    }
+                    inventoryVehicles.add(creaPage);
+                    mktChkDealers = settingDealer(dealer, mktChkDealers);
+
+                }
+            }
+        }
+
+
+        inventoryRepo.saveAll(inventoryVehicles);
+        dealerRepo.saveAll(mktChkDealers.values());
+
+
+    }
+
+    private Map<Long, EMkDealerRegistration> settingDealer(LinkedHashMap<?, ?> dealer, Map<Long, EMkDealerRegistration> mktChkDealers) {
+        log.info("settingDealer started");
+        Long mkDealerId = (dealer.get(AppraisalConstants.ID) != null) ? ((Number) dealer.get(AppraisalConstants.ID)).longValue() : null;
+        EMkDealerRegistration marketDealer = null;
+
+        if (mkDealerId != null && !mktChkDealers.containsKey(mkDealerId)) {
+            marketDealer = new EMkDealerRegistration();
+            marketDealer.setMkDealerId(dealer.get(AppraisalConstants.ID).toString());
+            marketDealer.setSellerName(null != dealer.get(AppraisalConstants.SELLER_NAME) ? dealer.get(AppraisalConstants.SELLER_NAME).toString() : null);
+            marketDealer.setWebsite(null != dealer.get(AppraisalConstants.WEBSITE_URL) ? dealer.get(AppraisalConstants.WEBSITE_URL).toString() : null);
+            marketDealer.setDealerType(null != dealer.get(AppraisalConstants.DEALER_TYPE) ? dealer.get(AppraisalConstants.DEALER_TYPE).toString() : null);
+            marketDealer.setStreet(null != dealer.get(AppraisalConstants.STREET) ? dealer.get(AppraisalConstants.STREET).toString() : null);
+            marketDealer.setCity(null != dealer.get(AppraisalConstants.CITY) ? dealer.get(AppraisalConstants.CITY).toString() : null);
+            marketDealer.setState(null != dealer.get(AppraisalConstants.STATE) ? dealer.get(AppraisalConstants.STATE).toString() : null);
+            marketDealer.setCountry(null != dealer.get(AppraisalConstants.COUNTRY) ? dealer.get(AppraisalConstants.COUNTRY).toString() : null);
+            marketDealer.setZip(null != dealer.get(AppraisalConstants.ZIP) ? dealer.get(AppraisalConstants.ZIP).toString() : null);
+            marketDealer.setLatitude(null != dealer.get(AppraisalConstants.LATITUDE) ? dealer.get(AppraisalConstants.LATITUDE).toString() : null);
+            marketDealer.setLongitude(null != dealer.get(AppraisalConstants.LONGITUDE) ? dealer.get(AppraisalConstants.LONGITUDE).toString() : null);
+            marketDealer.setPhone(null != dealer.get(AppraisalConstants.PHONE) ? dealer.get(AppraisalConstants.PHONE).toString() : null);
+            marketDealer.setSellerEmail(null != dealer.get(AppraisalConstants.SELLER_EMAIL) ? dealer.get(AppraisalConstants.SELLER_EMAIL).toString() : null);
+
+            mktChkDealers.put(mkDealerId, marketDealer);
+        }
+
+        return mktChkDealers;
+    }
+
+    public MktInventory fetchData(String city, int start, int rows) {
+        log.info("fetchData started");
+        WebClient webClient = WebClient.create();
+
+        return webClient.get()
+                .uri(marketCheckInvUrl + api_key + AppraisalConstants.AND + AppraisalConstants.FIRST_SEEN_RANGE + "20240507" + "-" + "20240508" +
+                        AppraisalConstants.AND + AppraisalConstants.CITY + AppraisalConstants.EQUAL + city + AppraisalConstants.AND +
+                        AppraisalConstants.CAR_TYPE + AppraisalConstants.EQUAL + AppraisalConstants.USED + AppraisalConstants.AND +
+                        AppraisalConstants.START + AppraisalConstants.EQUAL + start + AppraisalConstants.AND + AppraisalConstants.ROWS + AppraisalConstants.EQUAL + rows)
+                .retrieve()
+                .bodyToFlux(DataBuffer.class)
+                .reduce(DataBuffer::write)
+                .map(buffer -> {
+                    try (InputStream inputStream = buffer.asInputStream()) {
+                        // Process the input stream as needed
+                        return objectMapper.readValue(inputStream, MktInventory.class);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        DataBufferUtils.release(buffer);
+                    }
+                })
+                .block();
     }
 
 

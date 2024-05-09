@@ -25,9 +25,6 @@ public class Readfiles {
 
     public List<String> processExcelFile() throws IOException {
 
-
-       // Resource resource = new PathResource("C:\\Users\\Massil\\Downloads\\florida cities list.xlsx");
-        //Resource resource =  resourceLoader.getResource("classpath:Book1.xlsx");
         Resource resource =  resourceLoader.getResource("classpath:Cities_List.xlsx");
 
 

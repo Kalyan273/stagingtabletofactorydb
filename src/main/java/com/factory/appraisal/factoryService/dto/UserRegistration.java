@@ -62,6 +62,8 @@ public class UserRegistration extends Response {
     private UUID factoryManager;
     private Role roleOfUser;
 
+    private UUID dealerAdmin;
+
 
 
 }

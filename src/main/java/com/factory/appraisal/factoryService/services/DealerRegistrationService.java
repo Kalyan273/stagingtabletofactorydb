@@ -6,8 +6,10 @@ import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.dto.DealerRegistration;
 import com.factory.appraisal.factoryService.dto.DlrList;
 import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
+import freemarker.template.TemplateException;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +24,7 @@ public interface DealerRegistrationService {
      * @return message
      */
 
-    String createDealer(DealerRegistration dealerRegistration) throws AppraisalException;
+    String createDealer(DealerRegistration dealerRegistration) throws AppraisalException, MessagingException, TemplateException, IOException;
     /**
      * This method will show dealer based on dealerId
      * @param dealerId This is the primary key of EDealerRegistration entity

@@ -9,6 +9,7 @@ package com.factory.appraisal.factoryService.services.impl;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.GlobalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
+import com.factory.appraisal.factoryService.config.AuditConfiguration;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.controller.DealerRegistrationController;
 import com.factory.appraisal.factoryService.dto.*;
@@ -19,6 +20,7 @@ import com.factory.appraisal.factoryService.persistence.model.*;
 import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.DealerRegistrationService;
 import com.factory.appraisal.factoryService.services.UserRegistrationService;
+import freemarker.template.TemplateException;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +33,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,25 +76,49 @@ public class DealerRegistrationServiceImpl implements DealerRegistrationService 
     private CompanyRepo companyRepo;
     @Autowired
     private UserRegistrationService userRegService;
+
+    @Autowired
+    private AuditConfiguration auditConfiguration;
+
+
     @Override
-    public String createDealer(DealerRegistration dealerRegistration) throws AppraisalException {
+    @Transactional
+    public String createDealer(DealerRegistration dealerRegistration) throws AppraisalException, MessagingException, TemplateException, IOException {
         log.info("This method is used to create Dealer");
-        EDealerRegistration eDealerRegistration=apprVehMapper.dealerRegToEdealerReg(dealerRegistration);
-        UserRegistration userRegistration = apprVehMapper.dealerToUser(dealerRegistration);
-        userRegistration.setRoleId(dealerRegistration.getRoleId());
-//        EDealerRegistration dealer = dlrRegRepo.chkDlrUsrNamePresent(dealerRegistration.getName());
-
-        log.debug("Object coming for creating dealer {}",eDealerRegistration);
-/*        if(null!= dealer && dealer.getName().equals(dealerRegistration.getName())) {
-                return "user name already existed";
-
-        }*/
+        EDealerRegistration eDealerRegistration = apprVehMapper.dealerRegToEdealerReg(dealerRegistration);
+        log.debug("Object coming for creating dealer {}", eDealerRegistration);
         eDealerRegistration.setCreatedOn(new Date());
-        eDealerRegistration.setStatus("pending");
-        EDealerRegistration save = dlrRegRepo.save(eDealerRegistration);
-        String user = userRegService.createUser(userRegistration, save.getId());
+        if(null!=dealerRegistration.getDealershipNames()){
+            eDealerRegistration.setDealershipNames(dealerRegistration.getDealershipNames().toLowerCase());
+            eDealerRegistration.setStatus(AppraisalConstants.PENDING);
+        }
+        ERole byRole = roleRepo.findByRole(dealerRegistration.getRoleId());
 
-        return user;
+        if(byRole.getRole().equalsIgnoreCase("D2") || byRole.getRole().equalsIgnoreCase("D3") || byRole.getRole().equalsIgnoreCase("S1") || byRole.getRole().equalsIgnoreCase("M1")){
+            eDealerRegistration.setStatus(null);
+        }
+        auditConfiguration.setAuditorName(eDealerRegistration.getName());
+        EDealerRegistration save = dlrRegRepo.save(eDealerRegistration);
+
+        log.info("Dealer is saved and Process started for user registration");
+        if (byRole.getRole().equalsIgnoreCase("D2") || byRole.getRole().equalsIgnoreCase("D3") || byRole.getRole().equalsIgnoreCase("S1") || byRole.getRole().equalsIgnoreCase("M1")) {
+            if(null!=dealerRegistration.getDealerAdmin()){
+                ERoleMapping byUserId = roleMapRepo.findByUserId(dealerRegistration.getDealerAdmin());
+
+                if(null!=byUserId.getManager()){
+                    dealerRegistration.setManagerId(byUserId.getManager().getId());
+                }
+                if(null!=byUserId.getFactorySalesman()){
+                    dealerRegistration.setFactorySalesman(byUserId.getFactorySalesman().getId());
+                }
+                if(null!=byUserId.getFactoryManager()){
+                    dealerRegistration.setFactoryManager(byUserId.getFactoryManager().getId());
+                }
+            }
+            UserRegistration userRegistration = apprVehMapper.dealerToUser(dealerRegistration);
+            userRegService.createUser(userRegistration, save.getId());
+        }
+        return "Dealer Has Been saved Successfully";
     }
     @Override
     public DealerRegistration showInDealerEditPage(Long dealerId) throws AppraisalException {

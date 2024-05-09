@@ -5,11 +5,9 @@ import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.GlobalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
+import com.factory.appraisal.factoryService.dto.UserRegistration;
 import com.factory.appraisal.factoryService.persistence.model.*;
-import com.factory.appraisal.factoryService.repository.AppraiseVehicleRepo;
-import com.factory.appraisal.factoryService.repository.FileStatusRepo;
-import com.factory.appraisal.factoryService.repository.OffersRepo;
-import com.factory.appraisal.factoryService.repository.UserRegistrationRepo;
+import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.EmailService;
 import com.factory.appraisal.factoryService.services.FactoryPdfGenerator;
 import com.factory.appraisal.factoryService.util.CompareUtils;
@@ -45,6 +43,10 @@ import java.util.UUID;
 @Service
 public class EmailServiceImpl implements EmailService {
 
+
+
+    Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     @Autowired
     private UserRegistrationRepo userRegistrationRepo;
 
@@ -62,6 +64,9 @@ public class EmailServiceImpl implements EmailService {
     private FactoryPdfGenerator pdfGenerator;
 
     @Autowired
+    private RoleMappingRepo roleMappingRepo;
+
+    @Autowired
     private Configuration config;
     @Autowired
     private CompareUtils comUtl;
@@ -69,6 +74,10 @@ public class EmailServiceImpl implements EmailService {
     private String pdfpath;
     @Value("${image_folder_path}")
     private String imageFolderPath;
+
+
+    @Value("${spring.mail.username}")
+    private String fromMail;
 
 
 
@@ -249,6 +258,40 @@ public class EmailServiceImpl implements EmailService {
             sender.send(message);
 
         }
+    }
+
+    @Override
+    public void sendToUser(UserRegistration userReg) throws MessagingException, IOException, TemplateException {
+        log.info("This method is used to send mail to factory user after user creation");
+        MimeMessage message = sender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,true);
+
+        List<ERoleMapping> factoryAdmin = roleMappingRepo.findByRole();
+
+
+        Template t = config.getTemplate("usercreation.ftl");
+
+
+
+
+
+        Map<String, Object> model1 = new HashMap<>();
+        model1.put(AppraisalConstants.NAME,userReg.getFirstName()+" "+userReg.getLastName());
+        model1.put(AppraisalConstants.USERNAME,userReg.getUserName());
+        model1.put(AppraisalConstants.STREETADR,userReg.getStreetAddress());
+
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model1);
+
+
+        helper.setFrom(fromMail);
+        helper.setTo( userReg.getEmail());
+        helper.setText(html, true);
+
+        helper.setSubject(AppraisalConstants.USERCREATON);
+        sender.send(message);
+        log.info("mail send to : {}" , userReg.getEmail());
+
+
     }
 
 

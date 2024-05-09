@@ -14,6 +14,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * This is the Entity class ERoleMapping
@@ -79,6 +80,8 @@ public class ERoleMapping extends TransactionEntity{
     @JoinColumn(name = "FACTORY_SALESMAN",nullable = false)
     @Where(clause = "IS_ACTIVE=true")
     private EUserRegistration factorySalesman;
+
+    private UUID dealerAdmin;
 
 
 }

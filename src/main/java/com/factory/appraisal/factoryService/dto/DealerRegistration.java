@@ -117,5 +117,6 @@ public class DealerRegistration extends Response {
     private UUID factoryManager;
     private Role roleOfUser;
     private String compName;
+    private UUID dealerAdmin;
 
 }
