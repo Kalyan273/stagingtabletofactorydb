@@ -114,7 +114,7 @@ public interface OffersService {
      * @throws MessagingException
      */
 
-//    Response myScheduledTask() throws IOException, TemplateException, MessagingException;
+    Response myScheduledTask() throws IOException, TemplateException, MessagingException;
 
 
     /**

@@ -418,7 +418,7 @@ public class OffersServiceImpl implements OffersService {
     }
 
 
-   /* @Job(name = "The sample job", retries = 2)
+    @Job(name = "The sample job", retries = 2)
     @Override
     public Response myScheduledTask() throws IOException, TemplateException, MessagingException {
         log.info("myScheduledTask() method started..");
@@ -509,7 +509,7 @@ public class OffersServiceImpl implements OffersService {
 
         return response;
 
-    }*/
+    }
 
     @Override
     public ListedOffer getOfferList(Long appraisalId) throws OfferException {

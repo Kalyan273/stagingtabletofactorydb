@@ -15,25 +15,23 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 
-//@Configuration
+@Configuration
 public class JobRunrConfig {
-/*    @Autowired
+    @Autowired
     private JobScheduler jobScheduler;
     @Value("${cron.schedule.expression}")
-    private String cronExpression;*/
+    private String cronExpression;
 
-   /* @PostConstruct
+    @PostConstruct
     public void scheduleRecurrently() {
         jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
-    }*/
+    }
 
-/*
-    @Bean
+/*    @Bean
     public StorageProvider storageProvider(JobMapper jobMapper) {
         InMemoryStorageProvider storageProvider = new InMemoryStorageProvider();
         storageProvider.setJobMapper(jobMapper);
         return storageProvider;
-    }
-*/
+    }*/
 
 }
