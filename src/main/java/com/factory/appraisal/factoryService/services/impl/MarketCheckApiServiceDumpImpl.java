@@ -304,7 +304,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Transactional
     @Override
     public void storeDataFromMkDealerToDealerReg(Long start, Long end) throws AppraisalException {
-        List<EMkDealerRegistration> all = dealerRepo.findByRange(start, end);
+/*        List<EMkDealerRegistration> all = dealerRepo.findByRange(start, end);
         List<DealerRegistration> eDealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(all);
         Long roleIdOfD1 = roleRepo.findRoleIdOfD1User();
         for (DealerRegistration dealer : eDealerRegistrations) {
@@ -314,7 +314,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             EMkDealerRegistration dlrByMktId = dealerRepo.findDlrByMktId(dealer.getMkDealerId().toString());
             dlrByMktId.setUserUuid(dealer1);
             dealerRepo.save(dlrByMktId);
-        }
+        }*/
         List<EMkDealerRegistration> dealerWthOutUUID = dealerRepo.findDealerWthOutUUID();
         List<DealerRegistration> dealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(dealerWthOutUUID);
 
