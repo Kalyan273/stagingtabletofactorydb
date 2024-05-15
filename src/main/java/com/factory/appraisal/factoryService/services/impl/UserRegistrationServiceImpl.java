@@ -68,6 +68,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Value("${identityServer_userCreation}")
     private String userCreation;
 
+    @Autowired
+    private DealerRegistrationRepo dlrRegRepo;
+
+    @Value("${identityServerAuth}")
+    private String identityServerAuth;
+
     @Value("${paramValue}")
     private String paramValue;
 
@@ -77,10 +83,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     @Autowired
     private EmailServiceImpl emailService;
 
+    @Autowired
+    private ConfigCodesRepo configCodesRepo;
+
 
     @Override
     @Transactional
-    public Response createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException {
+    public String createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException {
         log.info("User Creation method is triggered **Service IMPL**");
         EUserRegistration eUserRegistration = null;
         auditConfiguration.setAuditorName(userRegistration.getUserName());
@@ -127,23 +136,27 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                 roleMappingRepo.save(eRoleMapping);
             }
         }
-        emailService.sendToUser(userRegistration);
-        Response response = new Response();
+   //    emailService.sendToUser(userRegistration);
+        /*Response response = new Response();
         response.setCode(HttpStatus.OK.value());
         response.setMessage("User Has Been saved Successfully");
-        response.setStatus(true);
-        return response;
+        response.setStatus(true);*/
+        return value;
     }
 
-    public String callTheUrl(EUserRegistration eUserReg){
+    public String callTheUrl(EUserRegistration eUserReg) {
         Users users1 = appraisalVehicleMapper.EUserRegToUsers(eUserReg);
-        List<UserEmail>emails= new ArrayList<>();
-        UserEmail email= new UserEmail();
+        List<UserEmail> emails = new ArrayList<>();
+        EnterpriseExtension extension = new EnterpriseExtension();
+        EConfigCodes eConfigCodes = configCodesRepo.byCodeGroup(AppraisalConstants.REALM);
+        UserEmail email = new UserEmail();
         email.setValue(eUserReg.getEmail());
         email.setPrimary(true);
         emails.add(email);
         users1.setEmails(emails);
-        log.debug("Object sending to Identity Server{}",users1);
+        users1.setUserName(eConfigCodes.getLongCode()+"/"+users1.getUserName());
+        users1.setEnterpriseExtension(extension);
+        log.debug("Object sending to Identity Server{}", users1);
         SendingRole role = sendJsonResponse(users1);
         String s = sendingJsonPatchReq(role);
         return role.getOperations().get(0).getValue().get(0).getValue();
@@ -153,62 +166,55 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     public SendingRole sendJsonResponse(Users users) {
         log.debug("User details sending to identity server **triggered**");
         SendingRole role = null;
-        UserExist userExist=null;
-        try{
-        RestTemplate restTemplate = new RestTemplate();
-        // Set the request headers
-            String username = "admin";
-            String password = "ySwqTgH164Ri";
-            String credentials = username + ":" + password;
-            String base64Credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-
-
+        UserExist userExist = null;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            // Set the request headers
             HttpHeaders headers = new HttpHeaders();
-        headers.set("accept", "application/scim+json");
-        headers.set("Content-Type", "application/scim+json");
-//        headers.set("Authorization", "Basic YWRtaW46YWRtaW4=");
-            headers.set("Authorization", "Basic " + base64Credentials);
+            headers.set("accept", "application/scim+json");
+            headers.set("Content-Type", "application/scim+json");
+            headers.set("Authorization", "Basic "+identityServerAuth);
 
-        // Create the request entity with the JSON payload and headers
-        HttpEntity<Users> requestEntity = new HttpEntity<>(users, headers);
-        String url=userCreation+"Users";
-        // Send the POST request to the third-party API
-        ResponseEntity<UserResponse> response1 = restTemplate.postForEntity(url, requestEntity, UserResponse.class);
-        UserResponse body = response1.getBody();
-        List<UserValue> uservalues = new ArrayList<>();
-        UserValue userValue = new UserValue();
-        userValue.setValue(body.getId());
-        userValue.setDisplay(body.getUserName());
-        uservalues.add(userValue);
-
-        Operation operation = new Operation();
-        List<Operation> operations = new ArrayList<>();
-        operation.setOp("add");
-        operation.setPath("users");
-        operation.setValue(uservalues);
-        operations.add(operation);
-
-        role = new SendingRole();
-        role.setOperations(operations);
-
-    }catch (HttpClientErrorException.Conflict ex){
-
-           UserExistResponse userExistResponse = checkUser(users.getUserName());
-
+            // Create the request entity with the JSON payload and headers
+            HttpEntity<Users> requestEntity = new HttpEntity<>(users, headers);
+            String url = userCreation + "Users";
+            // Send the POST request to the third-party API
+            ResponseEntity<UserResponse> response1 = restTemplate.postForEntity(url, requestEntity, UserResponse.class);
+            UserResponse body = response1.getBody();
             List<UserValue> uservalues = new ArrayList<>();
-            UserValue userValue= new UserValue();
-            userValue.setValue(userExistResponse.getResponse().get(0).getId());
-            userValue.setDisplay(userExistResponse.getResponse().get(0).getUserName());
+            UserValue userValue = new UserValue();
+            userValue.setValue(body.getId());
+            userValue.setDisplay(body.getUserName());
             uservalues.add(userValue);
 
+            Operation operation = new Operation();
             List<Operation> operations = new ArrayList<>();
-            Operation operation= new Operation();
             operation.setOp("add");
             operation.setPath("users");
             operation.setValue(uservalues);
             operations.add(operation);
 
-            role= new SendingRole();
+            role = new SendingRole();
+            role.setOperations(operations);
+
+        } catch (HttpClientErrorException.Conflict ex) {
+
+            UserExistResponse userExistResponse = checkUser(users.getUserName());
+
+            List<UserValue> uservalues = new ArrayList<>();
+            UserValue userValue = new UserValue();
+            userValue.setValue(userExistResponse.getResponse().get(0).getId());
+            userValue.setDisplay(userExistResponse.getResponse().get(0).getUserName());
+            uservalues.add(userValue);
+
+            List<Operation> operations = new ArrayList<>();
+            Operation operation = new Operation();
+            operation.setOp("add");
+            operation.setPath("users");
+            operation.setValue(uservalues);
+            operations.add(operation);
+
+            role = new SendingRole();
             role.setOperations(operations);
 
         }
@@ -217,62 +223,60 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     @Override
     public UserExistResponse checkUser(String userName) {
+
+        UserExistResponse userExistResponse = null;
+
+        String eDealerRegistration = dlrRegRepo.chkDlrUsrNamePresent(userName);
+        if(null!=eDealerRegistration && !"".equals(eDealerRegistration)){
+            userExistResponse = new UserExistResponse();
+            userExistResponse.setMessage("This username already exist");
+            userExistResponse.setCode(HttpStatus.CONFLICT.value());
+            userExistResponse.setStatus(true);
+            return userExistResponse;
+        }
+
         log.debug("UserName Searching checkUserImpl **triggered**");
         RestTemplate restTemplate = new RestTemplate();
-
         // Set the request headers
-        String username = "admin";
-        String password = "ySwqTgH164Ri";
-        String credentials = username + ":" + password;
-        String base64Credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/scim+json");
         headers.set("Content-Type", "application/scim+json");
-//        headers.set("Authorization", "Basic YWRtaW46YWRtaW4=");
-        headers.set("Authorization", "Basic " + base64Credentials);
+        headers.set("Authorization", "Basic "+identityServerAuth);
 
-        // Set the request headers
-/*        HttpHeaders headers = new HttpHeaders();
-        headers.set("accept","application/scim+json");
-        headers.set("Content-Type","application/scim+json");
-        headers.set("Authorization","Basic YWRtaW46YWRtaW4=");*/
+        UserExist userExist = new UserExist();
+        userExist.setFilter("userName Eq " + userName);
 
-        UserExist userExist= new UserExist();
-        userExist.setFilter("userName Eq "+userName);
-
-        List<String> schemas= new ArrayList<>();
-        String a= "urn:ietf:params:scim:api:messages:2.0:SearchRequest";
+        List<String> schemas = new ArrayList<>();
+        String a = "urn:ietf:params:scim:api:messages:2.0:SearchRequest";
         schemas.add(a);
         userExist.setSchemas(schemas);
 
-        String url=userCreation+"Users/.search";
+        String url = userCreation + "Users/.search";
 
         // Create the request entity with the JSON payload and headers
         HttpEntity<UserExist> requestEntity = new HttpEntity<>(userExist, headers);
 
         // Send the POST request to the third-party API
-        log.debug("URL: " +url);
+        log.debug("URL: " + url);
         log.debug("Filter: " + userExist.getFilter());
         ResponseEntity<SearchRes> response1 = restTemplate.postForEntity(url, requestEntity, SearchRes.class);
 
-        UserExistResponse userExistResponse=null;
-        if(0!=response1.getBody().getItemsPerPage() && 0!=response1.getBody().getTotalResults()){
+
+        if (0 != response1.getBody().getItemsPerPage() && 0 != response1.getBody().getTotalResults()) {
             SearchRes body = response1.getBody();
-            UserResponse response= new UserResponse();
+            UserResponse response = new UserResponse();
             response.setId(body.getResources().get(0).getId());
             response.setUserName(body.getResources().get(0).getUserName());
-            List<UserResponse>responseList=new ArrayList<>();
+            List<UserResponse> responseList = new ArrayList<>();
             responseList.add(response);
-            userExistResponse= new UserExistResponse();
+            userExistResponse = new UserExistResponse();
             userExistResponse.setResponse(responseList);
             userExistResponse.setMessage("This username already exist");
             userExistResponse.setCode(HttpStatus.CONFLICT.value());
             userExistResponse.setStatus(true);
 
-        }else{
-            userExistResponse= new UserExistResponse();
+        } else {
+            userExistResponse = new UserExistResponse();
             userExistResponse.setMessage("username is available");
             userExistResponse.setCode(HttpStatus.OK.value());
         }
@@ -289,29 +293,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     private String sendingJsonPatchReq(SendingRole role) {
-
         // Set the request headers
-        String username = "admin";
-        String password = "ySwqTgH164Ri";
-        String credentials = username + ":" + password;
-        String base64Credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
-
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/scim+json");
         headers.set("Content-Type", "application/scim+json");
-//        headers.set("Authorization", "Basic YWRtaW46YWRtaW4=");
-        headers.set("Authorization", "Basic " + base64Credentials);
-        // Set the request headers
-/*        HttpHeaders headers = new HttpHeaders();
-        headers.set("accept","application/scim+json");
-        headers.set("Content-Type","application/scim+json");
-        headers.set("Authorization","Basic YWRtaW46YWRtaW4=");*/
+        headers.set("Authorization", "Basic "+identityServerAuth);
 
         RestTemplate restTemplate = restTemplate();
 
         // Set the query parameters in the URI
-        String url = userCreation +"Roles/" +paramValue;
+        String url = userCreation + "Roles/" + paramValue;
 
         // Make the PATCH request with query parameters and headers
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PATCH, new HttpEntity<>(role, headers), String.class);

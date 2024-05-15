@@ -20,7 +20,7 @@ public interface UserRegistrationService {
      * @return message
      */
 
-    Response createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException;
+    String createUser(UserRegistration userRegistration, Long dealerId) throws AppraisalException, MessagingException, TemplateException, IOException;
 
 
     /**

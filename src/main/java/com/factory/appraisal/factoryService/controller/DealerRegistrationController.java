@@ -8,6 +8,7 @@ import com.factory.appraisal.factoryService.dto.*;
 import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
 import com.factory.appraisal.factoryService.services.DealerRegistrationService;
 import com.factory.appraisal.factoryService.services.FilterSpecificationService;
+import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +44,7 @@ public class DealerRegistrationController {
      */
     @ApiOperation(value = "Add dealer in database")
     @PostMapping("/savedealer")
-    public ResponseEntity<Response> dealerCreation(@RequestBody @Validated DealerRegistration dealerRegistration) throws AppraisalException {
+    public ResponseEntity<Response> dealerCreation(@RequestBody @Validated DealerRegistration dealerRegistration) throws AppraisalException, MessagingException, TemplateException, IOException {
 
         log.info("Dealer Creation method is triggered");
         String message=dealerRegistrationService.createDealer(dealerRegistration);

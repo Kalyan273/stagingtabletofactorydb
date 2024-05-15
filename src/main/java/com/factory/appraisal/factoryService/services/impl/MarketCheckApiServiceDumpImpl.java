@@ -18,19 +18,26 @@ import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
+import com.factory.appraisal.factoryService.persistence.model.EAppraiseVehicle;
+import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
 import com.factory.appraisal.factoryService.persistence.model.EUserRegistration;
-import com.factory.appraisal.factoryService.repository.ConfigCodesRepo;
-import com.factory.appraisal.factoryService.repository.RoleRepo;
-import com.factory.appraisal.factoryService.repository.UserRegistrationRepo;
+import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.util.Readfiles;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freemarker.template.TemplateException;
+import net.sf.jasperreports.engine.JRException;
+import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -39,6 +46,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -97,6 +105,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     private AppraiseVehicleServiceImpl appraiseVehicleService;
 
     @Autowired
+    private AppraiseVehicleRepo appraiseVehicleRepo;
+
+    @Autowired
     private RoleRepo roleRepo;
 
     @Autowired
@@ -105,6 +116,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     private ConfigCodesRepo configCodesRepo;
     @Autowired
     private FlCitiesRepo flCitiesRepo;
+
+    @Autowired
+    private DealerRegistrationRepo dlrRegRepo;
 
 
     @Transactional
@@ -303,68 +317,84 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     @Transactional
     @Override
-    public void storeDataFromMkDealerToDealerReg(Long start, Long end) throws AppraisalException {
-/*        List<EMkDealerRegistration> all = dealerRepo.findByRange(start, end);
-        List<DealerRegistration> eDealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(all);
-        Long roleIdOfD1 = roleRepo.findRoleIdOfD1User();
-        for (DealerRegistration dealer : eDealerRegistrations) {
-            dealer.setRoleId(roleIdOfD1);
-            String dealer1 = dealerRegistrationService.createDealer(dealer);
-            UUID uuid = UUID.fromString(dealer1);
-            EMkDealerRegistration dlrByMktId = dealerRepo.findDlrByMktId(dealer.getMkDealerId().toString());
-            dlrByMktId.setUserUuid(dealer1);
-            dealerRepo.save(dlrByMktId);
-        }*/
+    public void storeDataFromMkDealerToDealerReg() throws AppraisalException, MessagingException, TemplateException, IOException {
         List<EMkDealerRegistration> dealerWthOutUUID = dealerRepo.findDealerWthOutUUID();
         List<DealerRegistration> dealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(dealerWthOutUUID);
-
-
-
+        for (DealerRegistration dealer : dealerRegistrations) {
+            EDealerRegistration dealerByMktDlrID = dlrRegRepo.findDealerByMktDlrID(dealer.getMkDealerId());
+            if (null == dealerByMktDlrID) {
+                Long roleIdOfD1 = roleRepo.findRoleIdOfD1User();
+                dealer.setRoleId(roleIdOfD1);
+                String uuid = dealerRegistrationService.createDealer(dealer);
+                EMkDealerRegistration dlrByMktId = dealerRepo.findDlrByMktId(dealer.getMkDealerId().toString());
+                dlrByMktId.setUserUuid(uuid);
+                dealerRepo.save(dlrByMktId);
+            }
+        }
     }
+
+
 
     @Transactional
     @Override
-    public void storeDataFromMkInventoryToAppr(Long start, Long end) throws AppraisalException {
-        ApprCreaPage creaPages = null;
-//        List<EUserRegistration> userRepoAll = userRepo.findByRange(start,end);
-//        List<EUserRegistration> userRepoAll = userRepo.findAll();
-//        List<EMkDealerRegistration> dealerByUUID = dealerRepo.findAll();
-        List<EMkDealerRegistration> dealerByUUID = dealerRepo.findByRange(start, end);
+    public void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException {
 
-        for (EMkDealerRegistration dealer : dealerByUUID) {
-            log.info("mkt_dealer_id {}", dealer.getMkDealerId());
-//            EMkDealerRegistration dealerByUUID = dealerRepo.findDealerByUUID(user.getId().toString());
-            String mkDealerId = dealer.getMkDealerId();
-//            Long mkDealerId = user.getDealer().getMkDealerId();
-            List<EInventoryVehicles> mkInv = inventoryRepo.findByDealerId(mkDealerId);
-//            UUID userId = user.getId();
-            String userUuid = dealer.getUserUuid();
-            UUID uuid = UUID.fromString(userUuid);
+        int pageNumber = 0;
+        int pageSize = 500;
+        boolean hasNextPage = true;
 
-            for (EInventoryVehicles inv : mkInv) {
-                creaPages = mapper.invToApprCreaPage(inv);
+        while (hasNextPage) {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable);
 
-                creaPages = setColors(creaPages, inv.getExteriorColor(), inv.getInteriorColor());
+            // Process the current page
+            List<EInventoryVehicles> content = page.getContent();
+            // Add your processing logic here
 
-                List<String> allPics = new ArrayList<>();
-                allPics.add(inv.getVehiclePic1());
-                allPics.add(inv.getVehiclePic2());
-                allPics.add(inv.getVehiclePic3());
-                allPics.add(inv.getVehiclePic4());
-                allPics.add(inv.getVehiclePic5());
-                allPics.add(inv.getVehiclePic6());
-                allPics.add(inv.getVehiclePic7());
-                allPics.add(inv.getVehiclePic8());
-                allPics.add(inv.getVehiclePic9());
-                creaPages = setMedia(allPics, creaPages);
+            for (EInventoryVehicles inv : content) {
+
+                Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
+
+                Integer count = appraiseVehicleRepo.checkAprr(inv.getVin(),dealerId);
+                ApprCreaPage creaPages = null;
+                if (1 != count) {
+
+                    UUID userByDlrId = userRepo.findUserByDlrId(dealerId);
+
+                    creaPages = mapper.invToApprCreaPage(inv);
+
+                    creaPages = setColors(creaPages, inv.getExteriorColor(), inv.getInteriorColor());
+
+                    List<String> allPics = new ArrayList<>();
+                    allPics.add(inv.getVehiclePic1());
+                    allPics.add(inv.getVehiclePic2());
+                    allPics.add(inv.getVehiclePic3());
+                    allPics.add(inv.getVehiclePic4());
+                    allPics.add(inv.getVehiclePic5());
+                    allPics.add(inv.getVehiclePic6());
+                    allPics.add(inv.getVehiclePic7());
+                    allPics.add(inv.getVehiclePic8());
+                    allPics.add(inv.getVehiclePic9());
+                    creaPages = setMedia(allPics, creaPages);
 //                 creaPages.setFromMkt("YES");
 
-                appraiseVehicleService.addAppraiseVehicle(creaPages, uuid, AppraisalConstants.INVENTORY);
+                    appraiseVehicleService.addAppraiseVehicle(creaPages, userByDlrId, AppraisalConstants.INVENTORY);
+                } else {
+
+                    Long appraisalId = appraiseVehicleRepo.findAppraisal(inv.getVin(),dealerId);
+                    creaPages = mapper.invToApprCreaPage(inv);
+                    appraiseVehicleService.updateAppraisal(creaPages, appraisalId);
+
+                }
+
             }
-
+            // Check if there's a next page
+            hasNextPage = page.hasNext();
+            // Increase pageNumber for the next iteration
+            pageNumber++;
         }
-
     }
+
 
     private EInventoryVehicles setBuildParam(LinkedHashMap<?, ?> invInfo, LinkedHashMap<?, ?> build, LinkedHashMap<?, ?> dealer) {
         log.info("setBuildParam started");
@@ -600,16 +630,16 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Override
     public void getMarketCheckData() throws IOException, AppraisalException {
         List<String> cities = flCitiesRepo.getCityNames();
-//        for (String city : cities) {
-//            getInvAndDealer(city);
-//            log.info("{}", city);
-//        }
-        for(int i=0;i<cities.size();i++){
-            if(i==0){
-                getInvAndDealer(cities.get(i));
-                log.info("{}", cities.get(i));
-            }
+        for (String city : cities) {
+            getInvAndDealer(city);
+            log.info("{}", city);
         }
+//        for(int i=0;i<cities.size();i++){
+//            if(i==0){
+//                getInvAndDealer(cities.get(i));
+//                log.info("{}", cities.get(i));
+//            }
+//        }
     }
 
     public void getInvAndDealer(String city) throws AppraisalException, IOException {
@@ -737,6 +767,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                 })
                 .block();
     }
+
+
+
 
 
 }

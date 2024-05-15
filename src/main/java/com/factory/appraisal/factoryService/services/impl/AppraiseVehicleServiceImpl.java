@@ -878,16 +878,17 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
         if(null!=stereoStatus) {
             addApprConfigToList(apprConfigList, stereoStatus.getFactoryEquptOperat());
             addApprConfigToList(apprConfigList, stereoStatus.getFactoryEquptNotOperat());
-            addApprConfigToList(apprConfigList, stereoStatus.getKnobsMissing());
-            addApprConfigToList(apprConfigList, stereoStatus.getAfterMarket());
-            addApprConfigToList(apprConfigList, stereoStatus.getAftMktNavigaNiceSys());
+            addApprConfigToList(apprConfigList, stereoStatus.getMissingButtons());
+            addApprConfigToList(apprConfigList, stereoStatus.getAftMktSoundSys());
+            addApprConfigToList(apprConfigList, stereoStatus.getAftMktNavigaSys());
             addApprConfigToList(apprConfigList, stereoStatus.getAftMktRearEntertainSys());
             addApprConfigToList(apprConfigList, stereoStatus.getFactoryRearEntertainSys());
-            addApprConfigToList(apprConfigList, stereoStatus.getProfInstall());
-            addApprConfigToList(apprConfigList, stereoStatus.getBrokenScreen());
+            addApprConfigToList(apprConfigList, stereoStatus.getCd());
+         //   addApprConfigToList(apprConfigList, stereoStatus.getBrokenScreen());
             addApprConfigToList(apprConfigList, stereoStatus.getFadedDisBtn());
-            addApprConfigToList(apprConfigList, stereoStatus.getNotOperational());
-            addApprConfigToList(apprConfigList, stereoStatus.getOperational());
+            addApprConfigToList(apprConfigList, stereoStatus.getCrckdBrknScreen());
+            addApprConfigToList(apprConfigList, stereoStatus.getPrmSoundSys());
+            addApprConfigToList(apprConfigList, stereoStatus.getNvgSys());
 
         }
         return apprConfigList;
@@ -929,23 +930,24 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
         if(null!=warnLightSts) {
             addApprConfigToList(apprConfigList, warnLightSts.getNoFaults());
-            addApprConfigToList(apprConfigList, warnLightSts.getAbsLight());
+            addApprConfigToList(apprConfigList, warnLightSts.getAbsFault());
             addApprConfigToList(apprConfigList, warnLightSts.getAirBagFault());
-            addApprConfigToList(apprConfigList, warnLightSts.getBatteryFault());
-            addApprConfigToList(apprConfigList, warnLightSts.getBrakeSystem());
-            addApprConfigToList(apprConfigList, warnLightSts.getBrakePadWear());
-            addApprConfigToList(apprConfigList, warnLightSts.getChargingSystem());
-            addApprConfigToList(apprConfigList, warnLightSts.getCoolantLevel());
-            addApprConfigToList(apprConfigList, warnLightSts.getCoolantTemp());
+            addApprConfigToList(apprConfigList, warnLightSts.getBatteryLight());
+            addApprConfigToList(apprConfigList, warnLightSts.getBrakeSystemFault());
+            addApprConfigToList(apprConfigList, warnLightSts.getBrakePadWearLight());
+            addApprConfigToList(apprConfigList, warnLightSts.getChargingSystemFault());
+            addApprConfigToList(apprConfigList, warnLightSts.getClngSysFault());
+            addApprConfigToList(apprConfigList, warnLightSts.getCoolantLow());
             addApprConfigToList(apprConfigList, warnLightSts.getCheckEngineLight());
-            addApprConfigToList(apprConfigList, warnLightSts.getOilPressure());
-            addApprConfigToList(apprConfigList, warnLightSts.getServiceEngineSoon());
-            addApprConfigToList(apprConfigList, warnLightSts.getSteeringFaults());
-            addApprConfigToList(apprConfigList, warnLightSts.getSuspensionSystem());
+            addApprConfigToList(apprConfigList, warnLightSts.getOilPressureLow());
+            addApprConfigToList(apprConfigList, warnLightSts.getServiceSoon());
+            addApprConfigToList(apprConfigList, warnLightSts.getChngOilIndctr());
+            addApprConfigToList(apprConfigList, warnLightSts.getLowOilIndctr());
             addApprConfigToList(apprConfigList, warnLightSts.getTractionControl());
             addApprConfigToList(apprConfigList, warnLightSts.getTransmiFault());
-            addApprConfigToList(apprConfigList, warnLightSts.getDislExhFluidLight());
+            addApprConfigToList(apprConfigList, warnLightSts.getTpms());
             addApprConfigToList(apprConfigList, warnLightSts.getDislParticulateFilt());
+            addApprConfigToList(apprConfigList, warnLightSts.getMainBtryFault());
         }
 
 
@@ -984,18 +986,23 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
         if(null!=apprVehTireCondn) {
 
-            addApprConfigToList(apprConfigList, apprVehTireCondn.getAllMatching());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getAllMatchingSizeAndMake());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getMismatched());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getTreadDepth10_32New());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getTreadDepth6_32orhigherGood());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getTreadDepth4_32Poor());
-            addApprConfigToList(apprConfigList, apprVehTireCondn.getFrontsWornUnevenNeedReplacement());
-            addApprConfigToList(apprConfigList, apprVehTireCondn.getRearsWornNeedReplacement());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getFrontsWornUneven());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getRearsWorn());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getNoSpare());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getGoodSpare());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getRimDamage());
-            addApprConfigToList(apprConfigList, apprVehTireCondn.getWeatherCheckedSidewalls());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getSdWallsChkd());
             addApprConfigToList(apprConfigList, apprVehTireCondn.getSpareOnCar());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getStockOffset());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getAllSameMake());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getNeedRplcmt());
+            addApprConfigToList(apprConfigList, apprVehTireCondn.getRunFlats());
+
         }
 
         return apprConfigList;
@@ -1115,7 +1122,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
 
         testDriveStatus= appraisalVehicleMapper.updateEApprTestDrSts(page,testDriveStatus);
-        EAprVehImg img = testDriveStatus.getAprVehImg();
+        /*EAprVehImg img = testDriveStatus.getAprVehImg();
 
 
             if (Boolean.TRUE.equals(updatePics(page.getVehiclePic1(), img.getVehiclePic1()))) {
@@ -1206,9 +1213,9 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
             if (Boolean.TRUE.equals(updatePics(page.getVehicleVideo1(), img.getVehicleVideo1()))) {
 
                 img.setVehicleVideo1(page.getVehicleVideo1());
-            }
+            }*/
 
-        testDriveStatus.setAprVehImg(img);
+     //   testDriveStatus.setAprVehImg(img);
         return testDriveStatus;
     }
 

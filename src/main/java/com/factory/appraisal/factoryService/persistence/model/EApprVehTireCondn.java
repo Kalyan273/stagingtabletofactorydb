@@ -45,11 +45,12 @@ public class EApprVehTireCondn extends TransactionEntity {
     @GenericGenerator(name = "APR_VEH_TIRE_CONDN_SEQ", strategy=AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
 
+
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ALL_MATCH")
+    @JoinColumn(name = "ALL_MATCH_SIZE_AND_MAKE")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes allMatching;
+    private EConfigCodes allMatchingSizeAndMake;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -77,15 +78,15 @@ public class EApprVehTireCondn extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "F_WORN_UNEVEN_NEED_RPLMT")
+    @JoinColumn(name = "F_WORN_UNEVEN")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes frontsWornUnevenNeedReplacement;
+    private EConfigCodes frontsWornUneven;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "REARS_WORN_NEED_RPLMT ")
+    @JoinColumn(name = "REARS_WORN")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes rearsWornNeedReplacement;
+    private EConfigCodes rearsWorn;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -107,9 +108,9 @@ public class EApprVehTireCondn extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "WTHR_CHK_SDWALL")
+    @JoinColumn(name = "SIDWALLS_CHECKED")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes weatherCheckedSidewalls;
+    private EConfigCodes sdWallsChkd;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -118,8 +119,50 @@ public class EApprVehTireCondn extends TransactionEntity {
     private EConfigCodes spareOnCar;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "STOCK_OFFSET")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes stockOffset;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ALL_SAME_MAKE")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes allSameMake;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "NEED_REPLACEMENT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes needRplcmt;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "RUN_FLATS")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes runFlats;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @OneToOne(targetEntity = EApprTestDrSts.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "TD_STATUS_ID",nullable = false)
     @Where(clause = "IS_ACTIVE = true")
     private EApprTestDrSts tdStatus;
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "F_WORN_UNEVEN_NEED_RPLMT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes frontsWornUnevenNeedReplacement;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "REARS_WORN_NEED_RPLMT ")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes rearsWornNeedReplacement;*/
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "WTHR_CHK_SDWALL")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes weatherCheckedSidewalls;*/
 }

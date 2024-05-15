@@ -67,21 +67,21 @@ public class EApprVehStereoSts extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "KNOBS_MISSING")
+    @JoinColumn(name = "MISSING_BUTTONS")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes knobsMissing;
+    private EConfigCodes missingButtons;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "AFT_MKT_NAV_NICE_SYS")
+    @JoinColumn(name = "AFT_MKT_NAV_SYS")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes aftMktNavigaNiceSys;
+    private EConfigCodes aftMktNavigaSys;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "AFT_MKT")
+    @JoinColumn(name = "AFT_MKT_SOUND_SYS")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes afterMarket;
+    private EConfigCodes aftMktSoundSys;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -97,15 +97,15 @@ public class EApprVehStereoSts extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRO_INSTALL")
+    @JoinColumn(name = "CD")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes profInstall;
+    private EConfigCodes cd;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BROKEN_SCREEN")
+    @JoinColumn(name = "CRACKED_BROKEN_SCREEN")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes brokenScreen;
+    private EConfigCodes crckdBrknScreen;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -115,14 +115,45 @@ public class EApprVehStereoSts extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "NOT_OPRNL")
+    @JoinColumn(name = "PREMIUM_SOUND_SYS")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes notOperational;
+    private EConfigCodes prmSoundSys;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "NAVIGATION_SYSTEM")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes nvgSys;
+
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "NOT_OPRNL")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes notOperational;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "OPERATIONAL")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes operational;
+    private EConfigCodes operational;*/
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "KNOBS_MISSING")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes knobsMissing;*/
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRO_INSTALL")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes profInstall;*/
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "AFT_MKT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes afterMarket;*/
 
 }

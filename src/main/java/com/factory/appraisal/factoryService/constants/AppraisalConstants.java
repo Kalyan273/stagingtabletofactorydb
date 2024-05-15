@@ -31,6 +31,8 @@ public class AppraisalConstants {
 
     public static final String PUBLIC="public";
 
+  public static final String REALM = "realm";
+
 
 
     public static final String HOST="host";
@@ -94,9 +96,9 @@ public class AppraisalConstants {
     public static final String FADEDDISBTN="FAD_DIS/BUT" ;
     public static final String OPERATIONAL="OP" ;
     public static final String NOFAULTS="NO_FAULTS";
-    public static final String ABSLIGHT="ABS_LIGHT";
+    public static final String ABSFAULT="ABS_FAULT";
     public static final String AIRBAGFAULT="AIRBAG_FAULT";
-    public static final String BATTERYFAULT="BATTERY_FAULT";
+    public static final String BATTERYLIGHT="BATTERY_FAULT";
     public static final String BRAKESYSTEM="BREAK_SYSTEM";
     public static final String BRAKEPADWEAR="BREAK_PAD_WEAR";
     public static final String CHARGINGSYSTEM="CHARG_SYS";
@@ -379,7 +381,33 @@ public class AppraisalConstants {
 
   public static String USERCREATON="User Information";
 
+  public static final String COOLINGSYSTEMFAULT="CLNG_SYS_FLT";
+  public static final String COOLANTLOW="CLNT_LOW";
+  public static final String OILPRESSURELOW="OIL_PRE_LOW";
 
+  public static final String SERVICESOON="SRVC_SN";
+  public static final String CHANGEOILINDICATOR="CHNG_OIL_IND";
+  public static final String LOWOILINDICATOR="LOW_OIL_IND";
+  public static final String TPMS="TPMS";
+
+  public static final String MAINBATTERYFAULT="MAIN_BTRY_FLT";
+
+  public static final String MISSINGBUTTONS="MISSING_BUTTONS" ;
+  public static final String AFTMKTNAVIGASYS="AF_MAR_NAV_SYS" ;
+  public static final String AFTRMKTSNDSYS="AFT_MKT_SOUND_SYS";
+  public static final String CD="CD" ;
+  public static final String CRKDBROKENSCREEN="CRACKED/BROKEN_SCREEN" ;
+  public static final String PRMSOUNDSYS="PREMIUM_SOUND_SYS";
+  public static final String NVGSYS="NAVIGATION_SYSTEM" ;
+
+  public static final String SDWALLCHKD="SIDWLS_CHKD";
+  public static final String STOCKOFFSET="STK_OFFST";
+  public static final String ALLSAMEMAKE="AL_SM_MKE";
+  public static final String NEEDREPLACEMENT="ND_RPLCMT";
+  public static final String RUNSFLAT="RUN_FLT";
+
+  public static final String FRONTS_WORN_UNEVEN="FRNT_WRN_UNEVN";
+  public static final String REARS_WORN="RER_WRN";
 
 
 

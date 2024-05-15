@@ -58,7 +58,7 @@ public class EBookAndKeys extends TransactionEntity{
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "HAVE_1_KEY")
+        @JoinColumn(name = "HAVE_1_KEY")
     @Where(clause = "IS_ACTIVE = true")
     private EConfigCodes have_1_Key;
 

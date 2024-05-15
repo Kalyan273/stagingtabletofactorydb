@@ -1,4 +1,5 @@
 package com.factory.appraisal.factoryService.dto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import java.util.List;
 @NoArgsConstructor
@@ -11,5 +12,7 @@ public class Users {
     private String userName;
     private String password;
     private List<UserEmail> emails;
+    @JsonProperty("urn:ietf:params:scim:schemas:extension:enterprise:2.0:User")
+    private EnterpriseExtension enterpriseExtension;
 
 }

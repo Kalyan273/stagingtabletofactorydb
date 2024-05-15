@@ -150,4 +150,12 @@ public interface AppraiseVehicleRepo extends JpaRepository<EAppraiseVehicle,Long
 
  @Query("SELECT e FROM EAppraiseVehicle e WHERE e.invntrySts = 'created' AND valid=true")
     List<EAppraiseVehicle> findByDate();
+
+
+ @Query("select count(e) from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId")
+ Integer checkAprr(String vin, Long dealerId);
+
+
+ @Query("select e.id from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId")
+    Long findAppraisal(String vin, Long dealerId);
 }

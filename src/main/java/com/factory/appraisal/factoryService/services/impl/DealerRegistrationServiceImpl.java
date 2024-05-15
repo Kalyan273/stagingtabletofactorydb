@@ -85,6 +85,7 @@ public class DealerRegistrationServiceImpl implements DealerRegistrationService 
     @Transactional
     public String createDealer(DealerRegistration dealerRegistration) throws AppraisalException, MessagingException, TemplateException, IOException {
         log.info("This method is used to create Dealer");
+        String user="";
         EDealerRegistration eDealerRegistration = apprVehMapper.dealerRegToEdealerReg(dealerRegistration);
         log.debug("Object coming for creating dealer {}", eDealerRegistration);
         eDealerRegistration.setCreatedOn(new Date());
@@ -98,6 +99,7 @@ public class DealerRegistrationServiceImpl implements DealerRegistrationService 
             eDealerRegistration.setStatus(null);
         }
         auditConfiguration.setAuditorName(eDealerRegistration.getName());
+        eDealerRegistration.setFactoryMember(Boolean.TRUE);
         EDealerRegistration save = dlrRegRepo.save(eDealerRegistration);
 
         log.info("Dealer is saved and Process started for user registration");
@@ -116,9 +118,12 @@ public class DealerRegistrationServiceImpl implements DealerRegistrationService 
                 }
             }
             UserRegistration userRegistration = apprVehMapper.dealerToUser(dealerRegistration);
-            userRegService.createUser(userRegistration, save.getId());
+            user = userRegService.createUser(userRegistration, save.getId());
+        }else{
+            UserRegistration userRegistration = apprVehMapper.dealerToUser(dealerRegistration);
+            user = userRegService.createUser(userRegistration, save.getId());
         }
-        return "Dealer Has Been saved Successfully";
+        return user;
     }
     @Override
     public DealerRegistration showInDealerEditPage(Long dealerId) throws AppraisalException {

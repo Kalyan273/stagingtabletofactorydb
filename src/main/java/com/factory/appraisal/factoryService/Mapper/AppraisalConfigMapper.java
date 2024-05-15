@@ -32,45 +32,45 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(dashWrnLight.getNoFaults(),wrnLightMap, AppraisalConstants.NOFAULTS)){
             dashWrnLight.setNoFaults(wrnLightMap.get(AppraisalConstants.NOFAULTS));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getAbsLight(),wrnLightMap,AppraisalConstants.ABSLIGHT)){
-            dashWrnLight.setAbsLight(wrnLightMap.get(AppraisalConstants.ABSLIGHT));
+        if(isUpdateApprConfReq(dashWrnLight.getAbsFault(),wrnLightMap,AppraisalConstants.ABSFAULT)){
+            dashWrnLight.setAbsFault(wrnLightMap.get(AppraisalConstants.ABSFAULT));
         }
 
         if(isUpdateApprConfReq(dashWrnLight.getAirBagFault(),wrnLightMap,AppraisalConstants.AIRBAGFAULT)){
             dashWrnLight.setAirBagFault(wrnLightMap.get(AppraisalConstants.AIRBAGFAULT));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getBatteryFault(),wrnLightMap,AppraisalConstants.BATTERYFAULT)){
-            dashWrnLight.setBatteryFault(wrnLightMap.get(AppraisalConstants.BATTERYFAULT));
+        if(isUpdateApprConfReq(dashWrnLight.getBatteryLight(),wrnLightMap,AppraisalConstants.BATTERYLIGHT)){
+            dashWrnLight.setBatteryLight(wrnLightMap.get(AppraisalConstants.BATTERYLIGHT));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getBrakeSystem(),wrnLightMap,AppraisalConstants.BRAKESYSTEM)){
-            dashWrnLight.setBrakeSystem(wrnLightMap.get(AppraisalConstants.BRAKESYSTEM));
+        if(isUpdateApprConfReq(dashWrnLight.getBrakeSystemFault(),wrnLightMap,AppraisalConstants.BRAKESYSTEM)){
+            dashWrnLight.setBrakeSystemFault(wrnLightMap.get(AppraisalConstants.BRAKESYSTEM));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getBrakePadWear(),wrnLightMap,AppraisalConstants.BRAKEPADWEAR)){
-            dashWrnLight.setBrakePadWear(wrnLightMap.get(AppraisalConstants.BRAKEPADWEAR));
+        if(isUpdateApprConfReq(dashWrnLight.getBrakePadWearLight(),wrnLightMap,AppraisalConstants.BRAKEPADWEAR)){
+            dashWrnLight.setBrakePadWearLight(wrnLightMap.get(AppraisalConstants.BRAKEPADWEAR));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getChargingSystem(),wrnLightMap,AppraisalConstants.CHARGINGSYSTEM)){
-            dashWrnLight.setChargingSystem(wrnLightMap.get(AppraisalConstants.CHARGINGSYSTEM));
+        if(isUpdateApprConfReq(dashWrnLight.getChargingSystemFault(),wrnLightMap,AppraisalConstants.CHARGINGSYSTEM)){
+            dashWrnLight.setChargingSystemFault(wrnLightMap.get(AppraisalConstants.CHARGINGSYSTEM));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getCoolantLevel(),wrnLightMap,AppraisalConstants.COOLANTLEVEL)){
-            dashWrnLight.setCoolantLevel(wrnLightMap.get(AppraisalConstants.COOLANTLEVEL));
+        if(isUpdateApprConfReq(dashWrnLight.getClngSysFault(),wrnLightMap,AppraisalConstants.COOLINGSYSTEMFAULT)){
+            dashWrnLight.setClngSysFault(wrnLightMap.get(AppraisalConstants.COOLINGSYSTEMFAULT));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getCoolantTemp(),wrnLightMap,AppraisalConstants.COOLANTTEMP)){
-            dashWrnLight.setCoolantTemp(wrnLightMap.get(AppraisalConstants.COOLANTTEMP));
+        if(isUpdateApprConfReq(dashWrnLight.getCoolantLow(),wrnLightMap,AppraisalConstants.COOLANTLOW)){
+            dashWrnLight.setCoolantLow(wrnLightMap.get(AppraisalConstants.COOLANTLOW));
         }
         if(isUpdateApprConfReq(dashWrnLight.getCheckEngineLight(),wrnLightMap,AppraisalConstants.CHECKENGINELIGHT)){
             dashWrnLight.setCheckEngineLight(wrnLightMap.get(AppraisalConstants.CHECKENGINELIGHT));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getOilPressure(),wrnLightMap,AppraisalConstants.OILPRESSURE)){
-            dashWrnLight.setOilPressure(wrnLightMap.get(AppraisalConstants.OILPRESSURE));
+        if(isUpdateApprConfReq(dashWrnLight.getOilPressureLow(),wrnLightMap,AppraisalConstants.OILPRESSURELOW)){
+            dashWrnLight.setOilPressureLow(wrnLightMap.get(AppraisalConstants.OILPRESSURELOW));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getServiceEngineSoon(),wrnLightMap,AppraisalConstants.SERVICEENGINESOON)){
-            dashWrnLight.setServiceEngineSoon(wrnLightMap.get(AppraisalConstants.SERVICEENGINESOON));
+        if(isUpdateApprConfReq(dashWrnLight.getServiceSoon(),wrnLightMap,AppraisalConstants.SERVICESOON)){
+            dashWrnLight.setServiceSoon(wrnLightMap.get(AppraisalConstants.SERVICESOON));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getSteeringFaults(),wrnLightMap,AppraisalConstants.STEERINGFAULTS)){
-            dashWrnLight.setSteeringFaults(wrnLightMap.get(AppraisalConstants.STEERINGFAULTS));
+        if(isUpdateApprConfReq(dashWrnLight.getChngOilIndctr(),wrnLightMap,AppraisalConstants.CHANGEOILINDICATOR)){
+            dashWrnLight.setChngOilIndctr(wrnLightMap.get(AppraisalConstants.CHANGEOILINDICATOR));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getSuspensionSystem(),wrnLightMap,AppraisalConstants.SUSPENSIONSYSTEM)){
-            dashWrnLight.setSuspensionSystem(wrnLightMap.get(AppraisalConstants.SUSPENSIONSYSTEM));
+        if(isUpdateApprConfReq(dashWrnLight.getLowOilIndctr(),wrnLightMap,AppraisalConstants.LOWOILINDICATOR)){
+            dashWrnLight.setLowOilIndctr(wrnLightMap.get(AppraisalConstants.LOWOILINDICATOR));
         }
         if(isUpdateApprConfReq(dashWrnLight.getTractionControl(),wrnLightMap,AppraisalConstants.TRACTIONCONTROL)){
             dashWrnLight.setTractionControl(wrnLightMap.get(AppraisalConstants.TRACTIONCONTROL));
@@ -78,11 +78,14 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(dashWrnLight.getTransmiFault(),wrnLightMap,AppraisalConstants.TRANSMIFAULT)){
             dashWrnLight.setTransmiFault(wrnLightMap.get(AppraisalConstants.TRANSMIFAULT));
         }
-        if(isUpdateApprConfReq(dashWrnLight.getDislExhFluidLight(),wrnLightMap,AppraisalConstants.DISLEXHFLUIDLIGHT)){
-            dashWrnLight.setDislExhFluidLight(wrnLightMap.get(AppraisalConstants.DISLEXHFLUIDLIGHT));
+        if(isUpdateApprConfReq(dashWrnLight.getTpms(),wrnLightMap,AppraisalConstants.TPMS)){
+            dashWrnLight.setTpms(wrnLightMap.get(AppraisalConstants.TPMS));
         }
         if(isUpdateApprConfReq(dashWrnLight.getDislParticulateFilt(),wrnLightMap,AppraisalConstants.DISLPARTICULATEFILT)){
             dashWrnLight.setDislParticulateFilt(wrnLightMap.get(AppraisalConstants.DISLPARTICULATEFILT));
+        }
+        if(isUpdateApprConfReq(dashWrnLight.getMainBtryFault(),wrnLightMap,AppraisalConstants.MAINBATTERYFAULT)){
+            dashWrnLight.setMainBtryFault(wrnLightMap.get(AppraisalConstants.MAINBATTERYFAULT));
         }
 
         dashWrnLight.setTdStatus(testDrSts);
@@ -220,14 +223,14 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(stereoStatus.getFactoryEquptNotOperat(),stereoStatusMap,AppraisalConstants.FACTORYEQUPTNOTOPERAT)){
             stereoStatus.setFactoryEquptNotOperat(stereoStatusMap.get(AppraisalConstants.FACTORYEQUPTNOTOPERAT));
         }
-        if(isUpdateApprConfReq(stereoStatus.getKnobsMissing(),stereoStatusMap,AppraisalConstants.KNOBSMISSING)){
-            stereoStatus.setKnobsMissing(stereoStatusMap.get(AppraisalConstants.KNOBSMISSING));
+        if(isUpdateApprConfReq(stereoStatus.getMissingButtons(),stereoStatusMap,AppraisalConstants.MISSINGBUTTONS)){
+            stereoStatus.setMissingButtons(stereoStatusMap.get(AppraisalConstants.MISSINGBUTTONS));
         }
-        if(isUpdateApprConfReq(stereoStatus.getAftMktNavigaNiceSys(),stereoStatusMap,AppraisalConstants.AFTMKTNAVIGANICESYS)){
-            stereoStatus.setAftMktNavigaNiceSys(stereoStatusMap.get(AppraisalConstants.AFTMKTNAVIGANICESYS));
+        if(isUpdateApprConfReq(stereoStatus.getAftMktNavigaSys(),stereoStatusMap,AppraisalConstants.AFTMKTNAVIGASYS)){
+            stereoStatus.setAftMktNavigaSys(stereoStatusMap.get(AppraisalConstants.AFTMKTNAVIGASYS));
         }
-        if(isUpdateApprConfReq(stereoStatus.getAfterMarket(),stereoStatusMap,AppraisalConstants.AFTERMARKET)){
-            stereoStatus.setAfterMarket(stereoStatusMap.get(AppraisalConstants.AFTERMARKET));
+        if(isUpdateApprConfReq(stereoStatus.getAftMktSoundSys(),stereoStatusMap,AppraisalConstants.AFTRMKTSNDSYS)){
+            stereoStatus.setAftMktSoundSys(stereoStatusMap.get(AppraisalConstants.AFTRMKTSNDSYS));
         }
         if(isUpdateApprConfReq(stereoStatus.getAftMktRearEntertainSys(),stereoStatusMap,AppraisalConstants.AFTMKTREARENTERTAINSYS)){
             stereoStatus.setAftMktRearEntertainSys(stereoStatusMap.get(AppraisalConstants.AFTMKTREARENTERTAINSYS));
@@ -235,20 +238,20 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(stereoStatus.getFactoryRearEntertainSys(),stereoStatusMap,AppraisalConstants.FACTORYREARENTERTAINSYS)){
             stereoStatus.setFactoryRearEntertainSys(stereoStatusMap.get(AppraisalConstants.FACTORYREARENTERTAINSYS));
         }
-        if(isUpdateApprConfReq(stereoStatus.getProfInstall(),stereoStatusMap,AppraisalConstants.PROFINSTALL)){
-            stereoStatus.setProfInstall(stereoStatusMap.get(AppraisalConstants.PROFINSTALL));
+        if(isUpdateApprConfReq(stereoStatus.getCd(),stereoStatusMap,AppraisalConstants.CD)){
+            stereoStatus.setCd(stereoStatusMap.get(AppraisalConstants.CD));
         }
-        if(isUpdateApprConfReq(stereoStatus.getBrokenScreen(),stereoStatusMap,AppraisalConstants.BROKENSCREEN)){
-            stereoStatus.setBrokenScreen(stereoStatusMap.get(AppraisalConstants.BROKENSCREEN));
+        if(isUpdateApprConfReq(stereoStatus.getCrckdBrknScreen(),stereoStatusMap,AppraisalConstants.CRKDBROKENSCREEN)){
+            stereoStatus.setCrckdBrknScreen(stereoStatusMap.get(AppraisalConstants.CRKDBROKENSCREEN));
         }
         if(isUpdateApprConfReq(stereoStatus.getFadedDisBtn(),stereoStatusMap,AppraisalConstants.FADEDDISBTN)){
             stereoStatus.setFadedDisBtn(stereoStatusMap.get(AppraisalConstants.FADEDDISBTN));
         }
-        if(isUpdateApprConfReq(stereoStatus.getNotOperational(),stereoStatusMap,AppraisalConstants.NOTOPERATIONAL)){
-            stereoStatus.setNotOperational(stereoStatusMap.get(AppraisalConstants.NOTOPERATIONAL));
+        if(isUpdateApprConfReq(stereoStatus.getPrmSoundSys(),stereoStatusMap,AppraisalConstants.PRMSOUNDSYS)){
+            stereoStatus.setPrmSoundSys(stereoStatusMap.get(AppraisalConstants.PRMSOUNDSYS));
         }
-        if(isUpdateApprConfReq(stereoStatus.getOperational(),stereoStatusMap,AppraisalConstants.OPERATIONAL)){
-            stereoStatus.setOperational(stereoStatusMap.get(AppraisalConstants.OPERATIONAL));
+        if(isUpdateApprConfReq(stereoStatus.getNvgSys(),stereoStatusMap,AppraisalConstants.NVGSYS)){
+            stereoStatus.setNvgSys(stereoStatusMap.get(AppraisalConstants.NVGSYS));
         }
         stereoStatus.setTdStatus(testDrSts);
         testDrSts.setApprVehStereoSts(stereoStatus);
@@ -541,8 +544,8 @@ public class AppraisalConfigMapper {
         if(null==eApprVehTireCondn){
             eApprVehTireCondn=new EApprVehTireCondn();
         }
-        if(isUpdateApprConfReq(eApprVehTireCondn.getAllMatching(),map,AppraisalConstants.ALL_MATCHING)){
-            eApprVehTireCondn.setAllMatching(map.get(AppraisalConstants.ALL_MATCHING));
+        if(isUpdateApprConfReq(eApprVehTireCondn.getAllMatchingSizeAndMake(),map,AppraisalConstants.ALL_MATCHING)){
+            eApprVehTireCondn.setAllMatchingSizeAndMake(map.get(AppraisalConstants.ALL_MATCHING));
         }
         if(isUpdateApprConfReq(eApprVehTireCondn.getMismatched(),map,AppraisalConstants.MIS_MATCH)){
             eApprVehTireCondn.setMismatched(map.get(AppraisalConstants.MIS_MATCH));
@@ -556,11 +559,11 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(eApprVehTireCondn.getTreadDepth4_32Poor(),map,AppraisalConstants.TREAD_DEPTH_4_32_POOR)){
             eApprVehTireCondn.setTreadDepth4_32Poor(map.get(AppraisalConstants.TREAD_DEPTH_4_32_POOR));
         }
-        if(isUpdateApprConfReq(eApprVehTireCondn.getFrontsWornUnevenNeedReplacement(),map,AppraisalConstants.FRONTS_WORN_UNEVEN_NEED_RPLMT)){
-            eApprVehTireCondn.setFrontsWornUnevenNeedReplacement(map.get(AppraisalConstants.FRONTS_WORN_UNEVEN_NEED_RPLMT));
+        if(isUpdateApprConfReq(eApprVehTireCondn.getFrontsWornUneven(),map,AppraisalConstants.FRONTS_WORN_UNEVEN)){
+            eApprVehTireCondn.setFrontsWornUneven(map.get(AppraisalConstants.FRONTS_WORN_UNEVEN));
         }
-        if(isUpdateApprConfReq(eApprVehTireCondn.getRearsWornNeedReplacement(),map,AppraisalConstants.REARS_WORN_NEED_RPLMT)){
-            eApprVehTireCondn.setRearsWornNeedReplacement(map.get(AppraisalConstants.REARS_WORN_NEED_RPLMT));
+        if(isUpdateApprConfReq(eApprVehTireCondn.getRearsWorn(),map,AppraisalConstants.REARS_WORN)){
+            eApprVehTireCondn.setRearsWorn(map.get(AppraisalConstants.REARS_WORN));
         }
         if(isUpdateApprConfReq(eApprVehTireCondn.getNoSpare(),map,AppraisalConstants.NO_SPARE)){
             eApprVehTireCondn.setNoSpare(map.get(AppraisalConstants.NO_SPARE));
@@ -571,12 +574,25 @@ public class AppraisalConfigMapper {
         if(isUpdateApprConfReq(eApprVehTireCondn.getRimDamage(),map,AppraisalConstants.RIM_DAMAGE)){
             eApprVehTireCondn.setRimDamage(map.get(AppraisalConstants.RIM_DAMAGE));
         }
-        if(isUpdateApprConfReq(eApprVehTireCondn.getWeatherCheckedSidewalls(),map,AppraisalConstants.WEATR_CHK_SDWALL)){
-            eApprVehTireCondn.setWeatherCheckedSidewalls(map.get(AppraisalConstants.WEATR_CHK_SDWALL));
+        if(isUpdateApprConfReq(eApprVehTireCondn.getSdWallsChkd(),map,AppraisalConstants.SDWALLCHKD)){
+            eApprVehTireCondn.setSdWallsChkd(map.get(AppraisalConstants.SDWALLCHKD));
         }
         if(isUpdateApprConfReq(eApprVehTireCondn.getSpareOnCar(),map,AppraisalConstants.SPARE_ON_CAR)){
             eApprVehTireCondn.setSpareOnCar(map.get(AppraisalConstants.SPARE_ON_CAR));
         }
+        if(isUpdateApprConfReq(eApprVehTireCondn.getStockOffset(),map,AppraisalConstants.STOCKOFFSET)){
+            eApprVehTireCondn.setStockOffset(map.get(AppraisalConstants.STOCKOFFSET));
+        }
+        if(isUpdateApprConfReq(eApprVehTireCondn.getAllSameMake(),map,AppraisalConstants.ALLSAMEMAKE)){
+            eApprVehTireCondn.setAllSameMake(map.get(AppraisalConstants.ALLSAMEMAKE));
+        }
+        if(isUpdateApprConfReq(eApprVehTireCondn.getNeedRplcmt(),map,AppraisalConstants.NEEDREPLACEMENT)){
+            eApprVehTireCondn.setNeedRplcmt(map.get(AppraisalConstants.NEEDREPLACEMENT));
+        }
+        if(isUpdateApprConfReq(eApprVehTireCondn.getRunFlats(),map,AppraisalConstants.RUNSFLAT)){
+            eApprVehTireCondn.setRunFlats(map.get(AppraisalConstants.RUNSFLAT));
+        }
+
 
         eApprVehTireCondn.setTdStatus(testDrSts);
         testDrSts.setApprVehTireCondn(eApprVehTireCondn);

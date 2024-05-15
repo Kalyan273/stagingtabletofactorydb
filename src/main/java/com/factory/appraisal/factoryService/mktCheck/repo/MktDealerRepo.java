@@ -31,6 +31,6 @@ public interface MktDealerRepo extends JpaRepository<EMkDealerRegistration,Long>
     @Query(value = "select e from EMkDealerRegistration e where e.userUuid=:id")
     EMkDealerRegistration findDealerByUUID(String id);
 
-    @Query(value = "SELECT * FROM EMkDealerRegistration e WHERE e.userUuid IS NULL")
+    @Query(value = "SELECT e FROM EMkDealerRegistration e WHERE e.userUuid IS NULL")
     List<EMkDealerRegistration> findDealerWthOutUUID();
 }

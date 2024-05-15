@@ -27,6 +27,9 @@ public interface DealerRegistrationRepo extends JpaRepository<EDealerRegistratio
     @Query(value = "select e from EDealerRegistration e where e.valid=true and e.id=:dealerId")
     EDealerRegistration findDealerById(Long dealerId);
 
+    @Query(value = "select e.id from EDealerRegistration e where e.valid=true and e.mkDealerId=:mktDealerId")
+    Long findDealer(Long mktDealerId);
+
     /**
      *it will check the dealers username is present
      * @param name
@@ -35,9 +38,15 @@ public interface DealerRegistrationRepo extends JpaRepository<EDealerRegistratio
 
 
     @Query(value = "select e from EDealerRegistration e where e.valid=true and e.name=:name")
-    EDealerRegistration chkDlrUsrNamePresent(String name);
+    String chkDlrUsrNamePresent(String name);
 
     @Query(value = "select e from EDealerRegistration e where e.valid=true and e.company.id = null")
     Page<EDealerRegistration> getDlrListOfcompNameNull(Pageable pageable);
+
+
+    @Query(value = "select e from EDealerRegistration e where e.mkDealerId=:mktDealerId")
+    EDealerRegistration findDealerByMktDlrID(Long mktDealerId);
+
+
 
 }

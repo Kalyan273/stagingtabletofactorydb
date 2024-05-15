@@ -48,4 +48,7 @@ public interface ConfigCodesRepo extends JpaRepository<EConfigCodes,Long> {
     List<Long> getCodeForExtColor(String exterior);
     @Query(value="select c.id from EConfigCodes c where c.shortDescrip=:interior and c.codeType='INTERIOR_COLOR' and c.valid=true")
     List<Long> getCodeForIntColor(String interior);
+
+    @Query(value="select c from EConfigCodes c where c.configGroup=:configGroup and c.valid=true")
+    EConfigCodes byCodeGroup(String configGroup);
 }

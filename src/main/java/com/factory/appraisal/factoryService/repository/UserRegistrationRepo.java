@@ -32,6 +32,10 @@ public interface UserRegistrationRepo extends JpaRepository<EUserRegistration,Lo
     @Query(value = "select e from EUserRegistration e where e.valid=true and e.dealer.id=:dealerId")
     List<EUserRegistration> findUserByDealerId(Long dealerId);
 
+
+    @Query(value = "select e.id from EUserRegistration e where e.valid=true and e.dealer.id=:dealerId")
+    UUID findUserByDlrId(Long dealerId);
+
     /**
      *  This method returns EUserRegistration
      * @param userName This is userName

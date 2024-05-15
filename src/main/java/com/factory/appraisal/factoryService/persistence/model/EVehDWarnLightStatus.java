@@ -58,9 +58,9 @@ public class EVehDWarnLightStatus extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ABS_LIGHT")
+    @JoinColumn(name = "ABS_FAULT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes absLight;
+    private EConfigCodes absFault;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -70,40 +70,40 @@ public class EVehDWarnLightStatus extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BATTERY_FAULT")
+    @JoinColumn(name = "BATTERY_LIGHT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes batteryFault;
+    private EConfigCodes batteryLight;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BRAKE_SYSTEM")
+    @JoinColumn(name = "BRAKE_SYSTEM_FAULT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes brakeSystem;
+    private EConfigCodes brakeSystemFault;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BRAKE_PAD_WEAR")
+    @JoinColumn(name = "BRAKE_PAD_WEAR_LIGHT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes brakePadWear;
+    private EConfigCodes brakePadWearLight;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CHARGING_SYS")
+    @JoinColumn(name = "CHARGING_SYS_FAULT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes chargingSystem;
+    private EConfigCodes chargingSystemFault;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "COOLANT_LEVEL")
+    @JoinColumn(name = "COOLING_SYS_FAULT")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes coolantLevel;
+    private EConfigCodes clngSysFault;
 
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "COOLANT_TEMP")
+    @JoinColumn(name = "COOLANT_LOW")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes coolantTemp;
+    private EConfigCodes coolantLow;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
@@ -113,27 +113,27 @@ public class EVehDWarnLightStatus extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "OIL_PRESSURE")
+    @JoinColumn(name = "OIL_PRESSURE_LOW")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes oilPressure;
+    private EConfigCodes oilPressureLow;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "SERVICE_ENG_SOON")
+    @JoinColumn(name = "SERVICE_SOON")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes serviceEngineSoon;
+    private EConfigCodes serviceSoon;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "STEERING_FAULTS")
+    @JoinColumn(name = "CHNG_OIL_INDICATOR")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes steeringFaults;
+    private EConfigCodes chngOilIndctr;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "SUSPENSION_SYSTEM")
+    @JoinColumn(name = "LOW_OIL_INDCTR")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes suspensionSystem;
+    private EConfigCodes lowOilIndctr;
 
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
@@ -150,15 +150,90 @@ public class EVehDWarnLightStatus extends TransactionEntity {
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "DEF_LIGHT")
+    @JoinColumn(name = "TPMS")
     @Where(clause = "IS_ACTIVE = true")
-    private EConfigCodes dislExhFluidLight;
+    private EConfigCodes tpms;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "DPF_LIGHT")
     @Where(clause = "IS_ACTIVE = true")
     private EConfigCodes dislParticulateFilt;
+
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "MAIN_BTRY_FAULT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes mainBtryFault;
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "BATTERY_FAULT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes batteryFault;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "BRAKE_SYSTEM")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes brakeSystem;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "BRAKE_PAD_WEAR")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes brakePadWear;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CHARGING_SYS")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes chargingSystem;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COOLANT_LEVEL")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes coolantLevel;*/
+
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COOLANT_TEMP")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes coolantTemp;*/
+
+    /*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OIL_PRESSURE")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes oilPressure;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SERVICE_ENG_SOON")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes serviceEngineSoon;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "STEERING_FAULTS")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes steeringFaults;*/
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUSPENSION_SYSTEM")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes suspensionSystem;*/
+
+
+
+/*    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    @ManyToOne(targetEntity = EConfigCodes.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "DEF_LIGHT")
+    @Where(clause = "IS_ACTIVE = true")
+    private EConfigCodes dislExhFluidLight;*/
 
 
 
