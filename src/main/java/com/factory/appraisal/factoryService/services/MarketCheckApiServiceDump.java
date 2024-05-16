@@ -30,4 +30,7 @@ public interface MarketCheckApiServiceDump {
 
 
     void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException;
+
+
+    void mkDlrInvDumpSch();
 }

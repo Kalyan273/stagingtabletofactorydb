@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface MktSchedulerRepo extends JpaRepository<EMkScheduler,Long> {
 
+    @Query(value = "select e from EMkScheduler e where e.event=:event")
+    EMkScheduler findByEvent(String event);
+
 //    @Query(value = "select e from EMkScheduler e where e.event:eventName")
 //    EMkScheduler findByEvent(String eventName);
 }

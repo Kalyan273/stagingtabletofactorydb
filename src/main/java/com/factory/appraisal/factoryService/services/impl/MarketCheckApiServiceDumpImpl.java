@@ -17,6 +17,7 @@ import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration
 import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
+import com.factory.appraisal.factoryService.mktCheck.repo.MktSchedulerRepo;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
 import com.factory.appraisal.factoryService.persistence.model.EAppraiseVehicle;
 import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
@@ -119,6 +120,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     @Autowired
     private DealerRegistrationRepo dlrRegRepo;
+
+    @Autowired
+    private MktSchedulerRepo schedulerRepo;
 
 
     @Transactional
@@ -394,7 +398,6 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             pageNumber++;
         }
     }
-
 
     private EInventoryVehicles setBuildParam(LinkedHashMap<?, ?> invInfo, LinkedHashMap<?, ?> build, LinkedHashMap<?, ?> dealer) {
         log.info("setBuildParam started");
@@ -767,6 +770,17 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                 })
                 .block();
     }
+
+
+
+    @Override
+    public void mkDlrInvDumpSch() {
+            schedulerRepo.findByEvent(AppraisalConstants.MK_DLR_INV_DUMP_SCH);
+
+
+    }
+
+
 
 
 
