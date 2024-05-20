@@ -9,11 +9,13 @@ import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
+import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.dto.*;
 import com.factory.appraisal.factoryService.mktCheck.model.ECities;
 import com.factory.appraisal.factoryService.mktCheck.model.EInventoryVehicles;
 import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration;
+import com.factory.appraisal.factoryService.mktCheck.model.EMkScheduler;
 import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
 import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
@@ -776,6 +778,109 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Override
     public void mkDlrInvDumpSch() {
             schedulerRepo.findByEvent(AppraisalConstants.MK_DLR_INV_DUMP_SCH);
+
+
+    }
+
+
+    @Transactional
+    @Override
+    public Response getMarketCheckDataToSaveDealers() throws IOException, AppraisalException {
+
+        EMkScheduler findEvent = schedulerRepo.findByEvent(AppraisalConstants.MC_DEALER_DUMP_SCH);
+        Response response=new Response();
+        if(findEvent.getValid() == true){
+            List<String> cities = flCitiesRepo.getCityNames();
+//        for (String city : cities) {
+//            saveMarketCheckDealer(city);
+//            log.info("{}", city);
+//        }
+            for(int i=0;i<cities.size();i++){
+                if(i==0){
+                    saveMrktChkDealerByCity(cities.get(i));
+                    log.info("{}", cities.get(i));
+                }
+            }
+            response.setCode(HttpStatus.OK.value());
+            response.setMessage("MC_DEALER_DUMP_SCH active state is in true, new dealers added in MktChck DB");
+        }else{
+            response.setCode(HttpStatus.OK.value());
+            response.setMessage("MC_DEALER_DUMP_SCH active state is in false");
+        }
+        return response;
+    }
+
+    public void saveMrktChkDealerByCity(String city) throws WebClientResponseException {
+
+        MktDealer mktDealer = null;
+
+        WebClient webClient = WebClient.create();
+        int start = 0;
+        int rows = 50;
+
+        int noOfTime = 1;
+
+        for(int iteratePage=0;iteratePage<noOfTime;iteratePage++){
+
+            mktDealer = webClient.get()
+                    .uri(marketCheckDealerUrl + api_key + AppraisalConstants.AND + AppraisalConstants.CITY + AppraisalConstants.EQUAL + city + AppraisalConstants.AND + AppraisalConstants.START+AppraisalConstants.EQUAL+start+AppraisalConstants.AND+AppraisalConstants.ROWS+AppraisalConstants.EQUAL+rows+AppraisalConstants.AND+AppraisalConstants.FIRST_SEEN_RANGE+AppraisalConstants.EQUAL+"20240515-20240516")
+                    .header(AppraisalConstants.HOST, host)
+                    .retrieve()
+                    .bodyToFlux(DataBuffer.class)
+                    .reduce(DataBuffer::write)
+                    .map(buffer -> {
+                        try (InputStream inputStream = buffer.asInputStream()) {
+                            return objectMapper.readValue(inputStream, MktDealer.class);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            DataBufferUtils.release(buffer);
+                        }
+                    })
+                    .block();
+
+            int numFound = mktDealer.getNoOfDealers();
+            if (numFound % 50 == 0) {
+                noOfTime = (numFound / 50);
+            } else {
+                noOfTime = (numFound / 50) + 1;
+            }
+
+            if (null != mktDealer && !mktDealer.getDealers().isEmpty()) {
+
+                List<EMkDealerRegistration> dealerList = new ArrayList<>();
+                int size = mktDealer.getDealers().size();
+
+                for (int i = 0; i < size; i++) {
+
+                    LinkedHashMap<?, ?> dealerInfo = (LinkedHashMap<?, ?>) mktDealer.getDealers().get(i);
+                    EMkDealerRegistration dealerReg = new EMkDealerRegistration();
+
+                    Long dealerByMktId = dealerRepo.findDealerByMktId(dealerInfo.get(AppraisalConstants.ID).toString());
+
+                    if (null == dealerByMktId) {
+                        dealerReg.setMkDealerId(dealerInfo.get(AppraisalConstants.ID).toString());
+                        dealerReg.setSellerName(null != dealerInfo.get(AppraisalConstants.SELLER_NAME) ? dealerInfo.get(AppraisalConstants.SELLER_NAME).toString() : null);
+                        dealerReg.setWebsite(null != dealerInfo.get(AppraisalConstants.WEBSITE_URL) ? dealerInfo.get(AppraisalConstants.WEBSITE_URL).toString() : null);
+                        dealerReg.setDealerType(null != dealerInfo.get(AppraisalConstants.DEALER_TYPE) ? dealerInfo.get(AppraisalConstants.DEALER_TYPE).toString() : null);
+                        dealerReg.setStreet(null != dealerInfo.get(AppraisalConstants.STREET) ? dealerInfo.get(AppraisalConstants.STREET).toString() : null);
+                        dealerReg.setCity(null != dealerInfo.get(AppraisalConstants.CITY) ? dealerInfo.get(AppraisalConstants.CITY).toString() : null);
+                        dealerReg.setState(null != dealerInfo.get(AppraisalConstants.STATE) ? dealerInfo.get(AppraisalConstants.STATE).toString() : null);
+                        dealerReg.setCountry(null != dealerInfo.get(AppraisalConstants.COUNTRY) ? dealerInfo.get(AppraisalConstants.COUNTRY).toString() : null);
+                        dealerReg.setZip(null != dealerInfo.get(AppraisalConstants.ZIP) ? dealerInfo.get(AppraisalConstants.ZIP).toString() : null);
+                        dealerReg.setLatitude(null != dealerInfo.get(AppraisalConstants.LATITUDE) ? dealerInfo.get(AppraisalConstants.LATITUDE).toString() : null);
+                        dealerReg.setLongitude(null != dealerInfo.get(AppraisalConstants.LONGITUDE) ? dealerInfo.get(AppraisalConstants.LONGITUDE).toString() : null);
+                        dealerReg.setPhone(null != dealerInfo.get(AppraisalConstants.PHONE) ? dealerInfo.get(AppraisalConstants.PHONE).toString() : null);
+                        dealerReg.setSellerEmail(null != dealerInfo.get(AppraisalConstants.SELLER_EMAIL) ? dealerInfo.get(AppraisalConstants.SELLER_EMAIL).toString() : null);
+                        dealerList.add(dealerReg);
+                    }
+                }
+
+                dealerRepo.saveAll(dealerList);
+            } else {
+                log.info("{} :having no data", city);
+            }
+        }
 
 
     }

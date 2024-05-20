@@ -1,6 +1,7 @@
 package com.factory.appraisal.factoryService.services;
 
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
+import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import freemarker.template.TemplateException;
 import net.sf.jasperreports.engine.JRException;
 import org.jdom2.JDOMException;
@@ -33,4 +34,7 @@ public interface MarketCheckApiServiceDump {
 
 
     void mkDlrInvDumpSch();
+
+
+    Response getMarketCheckDataToSaveDealers() throws IOException, AppraisalException;
 }

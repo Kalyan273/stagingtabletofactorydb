@@ -11,6 +11,8 @@ public class AppraisalConstants {
   public static final String FIRST_SEEN_RANGE = "first_seen_range=";
     public static final String MK_DLR_INV_DUMP_SCH = "MK_DLR_INV_DUMP_SCH";
 
+  public static final String MC_DEALER_DUMP_SCH = "MC_DEALER_DUMP_SCH";
+
     private AppraisalConstants() {
   }
     public static final String SEQUENCE_NAME = "mygen";
