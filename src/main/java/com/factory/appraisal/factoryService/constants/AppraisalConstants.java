@@ -334,13 +334,13 @@ public class AppraisalConstants {
     public static final String ZIP="zip";
     public static final String LATITUDE="latitude";
     public static final String LONGITUDE="longitude";
-    public static final String PHONE="phone";
+    public static final String PHONE="seller_phone";
     public static final String AND ="&";
     public static final String MKT_VIN ="vin";
     public static final String DEALER_ID ="dealer_id";
     public static final String REF_PRICE ="ref_price";
 
-    public static final String WEBSITE_URL ="website";
+    public static final String WEBSITE_URL ="inventory_url";
     public static final String DATA_SOURCE="data_source";
     public static final String STATUS="status";
     public static final String LISTING_COUNT="listing_count";

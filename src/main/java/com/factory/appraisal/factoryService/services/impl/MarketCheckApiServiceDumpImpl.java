@@ -791,16 +791,16 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         Response response=new Response();
         if(findEvent.getValid() == true){
             List<String> cities = flCitiesRepo.getCityNames();
-//        for (String city : cities) {
-//            saveMarketCheckDealer(city);
-//            log.info("{}", city);
-//        }
-            for(int i=0;i<cities.size();i++){
-                if(i==0){
-                    saveMrktChkDealerByCity(cities.get(i));
-                    log.info("{}", cities.get(i));
-                }
-            }
+        for (String city : cities) {
+            saveMarketCheckDealer(city);
+            log.info("{}", city);
+        }
+//            for(int i=0;i<cities.size();i++){
+//                if(i==0){
+//                    saveMrktChkDealerByCity(cities.get(i));
+//                    log.info("{}", cities.get(i));
+//                }
+//            }
             response.setCode(HttpStatus.OK.value());
             response.setMessage("MC_DEALER_DUMP_SCH active state is in true, new dealers added in MktChck DB");
         }else{
@@ -823,7 +823,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         for(int iteratePage=0;iteratePage<noOfTime;iteratePage++){
 
             mktDealer = webClient.get()
-                    .uri(marketCheckDealerUrl + api_key + AppraisalConstants.AND + AppraisalConstants.CITY + AppraisalConstants.EQUAL + city + AppraisalConstants.AND + AppraisalConstants.START+AppraisalConstants.EQUAL+start+AppraisalConstants.AND+AppraisalConstants.ROWS+AppraisalConstants.EQUAL+rows+AppraisalConstants.AND+AppraisalConstants.FIRST_SEEN_RANGE+AppraisalConstants.EQUAL+"20240515-20240516")
+                    .uri(marketCheckDealerUrl + api_key + AppraisalConstants.AND + AppraisalConstants.CITY + AppraisalConstants.EQUAL + city + AppraisalConstants.AND + AppraisalConstants.START+AppraisalConstants.EQUAL+start+AppraisalConstants.AND+AppraisalConstants.ROWS+AppraisalConstants.EQUAL+rows)
                     .header(AppraisalConstants.HOST, host)
                     .retrieve()
                     .bodyToFlux(DataBuffer.class)
