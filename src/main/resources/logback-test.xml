@@ -145,6 +145,9 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <logger name ="org.jobrunr" level ="info">
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="FILE-AUDIT"/>
         <appender-ref ref="FILE-AUDIT-N"/>
