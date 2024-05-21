@@ -390,23 +390,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                         //for nonMembers
                         //checking car is sold?
                         if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
-
-                            if(null!= eAppraiseVehicle.getOffers() && !eAppraiseVehicle.getOffers().isEmpty()){
-                                // make it mktSold status
-                                // sold to other in offers
-                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
-                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
-                                appraiseVehicleRepo.save(eAppraiseVehicle);
-                                offersRepo.updateOfferSetSold(eAppraiseVehicle.getId());
-
-                            }else {
-                                //make it inactive in appr table
-                                // make it mktSold status
-                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
-                                eAppraiseVehicle.setValid(false);
-                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
-                                appraiseVehicleRepo.save(eAppraiseVehicle);
-                            }
+                            synSoldCars(eAppraiseVehicle);
                         }
                         else {
                             creaPages = mapper.invToApprCreaPage(inv);
@@ -417,23 +401,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     else {
                         //for members
                         if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
-
-                            if(null!= eAppraiseVehicle.getOffers() && !eAppraiseVehicle.getOffers().isEmpty()){
-                                // make it mktSold status
-                                // sold to other in offers
-                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
-                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
-                                appraiseVehicleRepo.save(eAppraiseVehicle);
-                                offersRepo.updateOfferSetSold(eAppraiseVehicle.getId());
-
-                            }else {
-                                //make it inactive in appr table
-                                // make it mktSold status
-                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
-                                eAppraiseVehicle.setValid(false);
-                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
-                                appraiseVehicleRepo.save(eAppraiseVehicle);
-                            }
+                            synSoldCars(eAppraiseVehicle);
                         }
                         else {
                             if(eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.CREATED)){
@@ -961,6 +929,26 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         }
 
 
+    }
+
+    private void synSoldCars(EAppraiseVehicle eAppraiseVehicle){
+
+        if(null!= eAppraiseVehicle.getOffers() && !eAppraiseVehicle.getOffers().isEmpty()){
+            // make it mktSold status
+            // sold to other in offers
+            eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+            eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+            appraiseVehicleRepo.save(eAppraiseVehicle);
+            offersRepo.updateOfferSetSold(eAppraiseVehicle.getId());
+
+        }else {
+            //make it inactive in appr table
+            // make it mktSold status
+            eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+            eAppraiseVehicle.setValid(false);
+            eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+            appraiseVehicleRepo.save(eAppraiseVehicle);
+        }
     }
 
 
