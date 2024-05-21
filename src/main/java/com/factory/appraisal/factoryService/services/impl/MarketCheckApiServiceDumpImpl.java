@@ -341,108 +341,113 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Transactional
     @Override
     public void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException {
+        EMkScheduler schedulerByEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_INV_FACTORY_SCH);
+        if(null!= schedulerByEvent && schedulerByEvent.getValid()){
+            schedulerByEvent.setStartDate(new Date());
+            EMkScheduler mkSchedulerSave = schedulerRepo.save(schedulerByEvent);
+            int pageNumber = 0;
+            int pageSize = 500;
+            boolean hasNextPage = true;
+            while (hasNextPage) {
+                Pageable pageable = PageRequest.of(pageNumber, pageSize);
+                Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable); //active inv
+                //sold inv
+                List<String> soldCarsVin = mktSoldCarRepo.getAllMktSoldCars();
+                // Process the current page
+                List<EInventoryVehicles> content = page.getContent();
+                // Add your processing logic here
 
-        int pageNumber = 0;
-        int pageSize = 500;
-        boolean hasNextPage = true;
-        while (hasNextPage) {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
-            Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable); //active inv
-            //sold inv
-            List<String> soldCarsVin = mktSoldCarRepo.getAllMktSoldCars();
-            // Process the current page
-            List<EInventoryVehicles> content = page.getContent();
-            // Add your processing logic here
+                for (EInventoryVehicles inv : content) {
 
-            for (EInventoryVehicles inv : content) {
+                    Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
+                    EAppraiseVehicle eAppraiseVehicle = appraiseVehicleRepo.findAppraisalByVinAndDealerId(inv.getVin(),dealerId);
+                    ApprCreaPage creaPages = null;
 
-                Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
-                 EAppraiseVehicle eAppraiseVehicle = appraiseVehicleRepo.findAppraisalByVinAndDealerId(inv.getVin(),dealerId);
-                ApprCreaPage creaPages = null;
+                    //if null means nonmember only
+                    if ( null== eAppraiseVehicle ) {
 
-               //if null means nonmember only
-                if ( null== eAppraiseVehicle ) {
+                        UUID userByDlrId = userRepo.findUserByDlrId(dealerId);
 
-                    UUID userByDlrId = userRepo.findUserByDlrId(dealerId);
+                        creaPages = mapper.invToApprCreaPage(inv);
 
-                    creaPages = mapper.invToApprCreaPage(inv);
+                        creaPages = setColors(creaPages, inv.getExteriorColor(), inv.getInteriorColor());
 
-                    creaPages = setColors(creaPages, inv.getExteriorColor(), inv.getInteriorColor());
+                        List<String> allPics = new ArrayList<>();
+                        allPics.add(inv.getVehiclePic1());
+                        allPics.add(inv.getVehiclePic2());
+                        allPics.add(inv.getVehiclePic3());
+                        allPics.add(inv.getVehiclePic4());
+                        allPics.add(inv.getVehiclePic5());
+                        allPics.add(inv.getVehiclePic6());
+                        allPics.add(inv.getVehiclePic7());
+                        allPics.add(inv.getVehiclePic8());
+                        allPics.add(inv.getVehiclePic9());
+                        creaPages = setMedia(allPics, creaPages);
+                        creaPages.setFromMkt(Boolean.TRUE);
 
-                    List<String> allPics = new ArrayList<>();
-                    allPics.add(inv.getVehiclePic1());
-                    allPics.add(inv.getVehiclePic2());
-                    allPics.add(inv.getVehiclePic3());
-                    allPics.add(inv.getVehiclePic4());
-                    allPics.add(inv.getVehiclePic5());
-                    allPics.add(inv.getVehiclePic6());
-                    allPics.add(inv.getVehiclePic7());
-                    allPics.add(inv.getVehiclePic8());
-                    allPics.add(inv.getVehiclePic9());
-                    creaPages = setMedia(allPics, creaPages);
-                    creaPages.setFromMkt(Boolean.TRUE);
-
-                    appraiseVehicleService.addAppraiseVehicle(creaPages, userByDlrId, AppraisalConstants.INVENTORY);
-                }
-                else if(!eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.DRAFT)){
-                    //checking for member
-                    if(eAppraiseVehicle.getFromMkt().equals(Boolean.TRUE)){
-                        //for nonMembers
-                        //checking car is sold?
-                        if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
-                            synSoldCars(eAppraiseVehicle);
-                        }
-                        else {
-                            creaPages = mapper.invToApprCreaPage(inv);
-                            appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
-                        }
-
+                        appraiseVehicleService.addAppraiseVehicle(creaPages, userByDlrId, AppraisalConstants.INVENTORY);
                     }
-                    else {
-                        //for members
-                        if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
-                            synSoldCars(eAppraiseVehicle);
-                        }
-                        else {
-                            if(eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.CREATED)){
-                                //move to inventory
-                                appraiseVehicleService.moveToInventory(eAppraiseVehicle.getId());
-
-                            }else {
-                                //update
+                    else if(!eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.DRAFT)){
+                        //checking for member
+                        if(eAppraiseVehicle.getFromMkt().equals(Boolean.TRUE)){
+                            //for nonMembers
+                            //checking car is sold?
+                            if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
+                                synSoldCars(eAppraiseVehicle);
+                            }
+                            else {
                                 creaPages = mapper.invToApprCreaPage(inv);
                                 appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
-
                             }
 
-
                         }
+                        else {
+                            //for members
+                            if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
+                                synSoldCars(eAppraiseVehicle);
+                            }
+                            else {
+                                if(eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.CREATED)){
+                                    //move to inventory
+                                    appraiseVehicleService.moveToInventory(eAppraiseVehicle.getId());
+
+                                }else {
+                                    //update
+                                    creaPages = mapper.invToApprCreaPage(inv);
+                                    appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
+
+                                }
+
+
+                            }
+                        }
+
                     }
 
                 }
-
+                // Check if there's a next page
+                hasNextPage = page.hasNext();
+                // Increase pageNumber for the next iteration
+                pageNumber++;
             }
-            // Check if there's a next page
-            hasNextPage = page.hasNext();
-            // Increase pageNumber for the next iteration
-            pageNumber++;
+
+            //insert record in inventory_aud table
+            InventoryAuditing inventoryAuditing = new InventoryAuditing();
+            inventoryAuditing.setActiveInvCount(inventoryRepo.countMktInv());
+            inventoryAuditing.setSoldInvCount(mktSoldCarRepo.getAllMktSoldCarsCount());
+            inventoryAuditing.setExpireInvCount(inventoryRepo.countMktExpireInv());
+            inventoryAuditing.setModifiedBy(AppraisalConstants.SYSTEM);
+
+            //delete all active and sold inv from mkt schema
+            mktSoldCarRepo.deleteAll();
+            inventoryRepo.deleteAll();
+
+            //update schedular end date
+            mkSchedulerSave.setEndDate(new Date());
+            schedulerRepo.save(mkSchedulerSave);
+
+
         }
-
-        //insert record in inventory_aud table
-        InventoryAuditing inventoryAuditing = new InventoryAuditing();
-        inventoryAuditing.setActiveInvCount(inventoryRepo.countMktInv());
-        inventoryAuditing.setSoldInvCount(mktSoldCarRepo.getAllMktSoldCarsCount());
-        inventoryAuditing.setExpireInvCount(inventoryRepo.countMktExpireInv());
-        inventoryAuditing.setModifiedBy(AppraisalConstants.SYSTEM);
-
-        //delete all active and sold inv from mkt schema
-        mktSoldCarRepo.deleteAll();
-        inventoryRepo.deleteAll();
-
-        //update schedular end date
-        EMkScheduler schedulerByEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_INV_FACTORY_SCH);
-        schedulerByEvent.setEndDate(new Date());
-        schedulerRepo.save(schedulerByEvent);
 
 
     }

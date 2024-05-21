@@ -299,6 +299,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
 
     @Override
+    @Transactional
     public Response addAppraiseVehicle(ApprCreaPage apprCreaPage, UUID userId,String apprStatus) throws AppraisalException {
 
                 EAppraiseVehicle eAppraiseVehicle = appraisalVehicleMapper.appCreaPageToEAppVehCond(apprCreaPage);
@@ -513,6 +514,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
 
     @Override
+    @Transactional
     public Response updateAppraisal(ApprCreaPage page, Long apprId) throws AppraisalException, IOException, JRException, JDOMException {
 
         EAppraiseVehicle vehicle = eAppraiseVehicleRepo.getAppraisalById(apprId);
