@@ -148,14 +148,16 @@ public interface AppraiseVehicleRepo extends JpaRepository<EAppraiseVehicle,Long
  @Query("SELECT DISTINCT v.tdStatus.transmissionType FROM EAppraiseVehicle v")
  List<String> findDistinctTrasmission();
 
- @Query("SELECT e FROM EAppraiseVehicle e WHERE e.invntrySts = 'created' AND valid=true")
+ @Query("SELECT e FROM EAppraiseVehicle e WHERE e.invntrySts = 'created' AND e.valid=true")
     List<EAppraiseVehicle> findByDate();
 
 
- @Query("select count(e) from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId")
+ @Query("select count(e) from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId and e.valid=true")
  Integer checkAprr(String vin, Long dealerId);
 
 
- @Query("select e.id from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId")
+ @Query("select e.id from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId and e.valid=true")
     Long findAppraisal(String vin, Long dealerId);
+ @Query("select e from EAppraiseVehicle e where e.vinNumber=:vin and e.dealer.id=:dealerId and e.valid=true")
+ EAppraiseVehicle  findAppraisalByVinAndDealerId(String vin, Long dealerId);
 }

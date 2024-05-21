@@ -412,6 +412,11 @@ public class AppraisalConstants {
   public static final String FRONTS_WORN_UNEVEN="FRNT_WRN_UNEVN";
   public static final String REARS_WORN="RER_WRN";
 
+  public static final String MKT_SOLD= "mkt_sold";
+  public static final String SYSTEM= "SYSTEM";
+
+  public static final String  SYNC_DLR_INV_FACTORY_SCH="SYNC_DLR_INV_FACTORY_SCH";
+
 
 
 

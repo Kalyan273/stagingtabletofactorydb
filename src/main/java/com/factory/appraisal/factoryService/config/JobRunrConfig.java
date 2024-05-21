@@ -1,9 +1,11 @@
 package com.factory.appraisal.factoryService.config;
 
 
+import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.services.OffersService;
 import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.scheduling.JobScheduler;
+import org.jobrunr.scheduling.cron.Cron;
 import org.jobrunr.storage.InMemoryStorageProvider;
 import org.jobrunr.storage.StorageProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,8 @@ public class JobRunrConfig {
 
     @PostConstruct
     public void scheduleRecurrently() {
-        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
+        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(Cron.hourly(), MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
     }
 
 /*    @Bean

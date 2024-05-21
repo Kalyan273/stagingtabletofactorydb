@@ -11,19 +11,15 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
-import com.factory.appraisal.factoryService.dto.*;
-import com.factory.appraisal.factoryService.mktCheck.model.ECities;
-import com.factory.appraisal.factoryService.mktCheck.model.EInventoryVehicles;
-import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration;
-import com.factory.appraisal.factoryService.mktCheck.model.EMkScheduler;
-import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktSchedulerRepo;
+import com.factory.appraisal.factoryService.dto.ApprCreaPage;
+import com.factory.appraisal.factoryService.dto.DealerRegistration;
+import com.factory.appraisal.factoryService.dto.MktDealer;
+import com.factory.appraisal.factoryService.dto.MktInventory;
+import com.factory.appraisal.factoryService.mktCheck.model.*;
+import com.factory.appraisal.factoryService.mktCheck.repo.*;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
 import com.factory.appraisal.factoryService.persistence.model.EAppraiseVehicle;
 import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
-import com.factory.appraisal.factoryService.persistence.model.EUserRegistration;
 import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.util.Readfiles;
@@ -40,7 +36,6 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -55,9 +50,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -125,6 +117,11 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     @Autowired
     private MktSchedulerRepo schedulerRepo;
+    @Autowired
+    private MktSoldCarRepo mktSoldCarRepo;
+    @Autowired
+    private OffersRepo offersRepo;
+
 
 
     @Transactional
@@ -348,11 +345,11 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         int pageNumber = 0;
         int pageSize = 500;
         boolean hasNextPage = true;
-
         while (hasNextPage) {
             Pageable pageable = PageRequest.of(pageNumber, pageSize);
-            Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable);
-
+            Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable); //active inv
+            //sold inv
+            List<String> soldCarsVin = mktSoldCarRepo.getAllMktSoldCars();
             // Process the current page
             List<EInventoryVehicles> content = page.getContent();
             // Add your processing logic here
@@ -360,10 +357,11 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             for (EInventoryVehicles inv : content) {
 
                 Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
-
-                Integer count = appraiseVehicleRepo.checkAprr(inv.getVin(),dealerId);
+                 EAppraiseVehicle eAppraiseVehicle = appraiseVehicleRepo.findAppraisalByVinAndDealerId(inv.getVin(),dealerId);
                 ApprCreaPage creaPages = null;
-                if (1 != count) {
+
+               //if null means nonmember only
+                if ( null== eAppraiseVehicle ) {
 
                     UUID userByDlrId = userRepo.findUserByDlrId(dealerId);
 
@@ -382,14 +380,76 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     allPics.add(inv.getVehiclePic8());
                     allPics.add(inv.getVehiclePic9());
                     creaPages = setMedia(allPics, creaPages);
-//                 creaPages.setFromMkt("YES");
+                    creaPages.setFromMkt(Boolean.TRUE);
 
                     appraiseVehicleService.addAppraiseVehicle(creaPages, userByDlrId, AppraisalConstants.INVENTORY);
-                } else {
+                }
+                else if(!eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.DRAFT)){
+                    //checking for member
+                    if(eAppraiseVehicle.getFromMkt().equals(Boolean.TRUE)){
+                        //for nonMembers
+                        //checking car is sold?
+                        if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
 
-                    Long appraisalId = appraiseVehicleRepo.findAppraisal(inv.getVin(),dealerId);
-                    creaPages = mapper.invToApprCreaPage(inv);
-                    appraiseVehicleService.updateAppraisal(creaPages, appraisalId);
+                            if(null!= eAppraiseVehicle.getOffers() && !eAppraiseVehicle.getOffers().isEmpty()){
+                                // make it mktSold status
+                                // sold to other in offers
+                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+                                appraiseVehicleRepo.save(eAppraiseVehicle);
+                                offersRepo.updateOfferSetSold(eAppraiseVehicle.getId());
+
+                            }else {
+                                //make it inactive in appr table
+                                // make it mktSold status
+                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+                                eAppraiseVehicle.setValid(false);
+                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+                                appraiseVehicleRepo.save(eAppraiseVehicle);
+                            }
+                        }
+                        else {
+                            creaPages = mapper.invToApprCreaPage(inv);
+                            appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
+                        }
+
+                    }
+                    else {
+                        //for members
+                        if(soldCarsVin.contains(eAppraiseVehicle.getVinNumber())){
+
+                            if(null!= eAppraiseVehicle.getOffers() && !eAppraiseVehicle.getOffers().isEmpty()){
+                                // make it mktSold status
+                                // sold to other in offers
+                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+                                appraiseVehicleRepo.save(eAppraiseVehicle);
+                                offersRepo.updateOfferSetSold(eAppraiseVehicle.getId());
+
+                            }else {
+                                //make it inactive in appr table
+                                // make it mktSold status
+                                eAppraiseVehicle.setMktStatus(AppraisalConstants.MKT_SOLD);
+                                eAppraiseVehicle.setValid(false);
+                                eAppraiseVehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
+                                appraiseVehicleRepo.save(eAppraiseVehicle);
+                            }
+                        }
+                        else {
+                            if(eAppraiseVehicle.getInvntrySts().equals(AppraisalConstants.CREATED)){
+                                //move to inventory
+                                appraiseVehicleService.moveToInventory(eAppraiseVehicle.getId());
+
+                            }else {
+                                //update
+                                creaPages = mapper.invToApprCreaPage(inv);
+                                appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
+
+                            }
+
+
+                        }
+                    }
 
                 }
 
@@ -399,6 +459,24 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             // Increase pageNumber for the next iteration
             pageNumber++;
         }
+
+        //insert record in inventory_aud table
+        InventoryAuditing inventoryAuditing = new InventoryAuditing();
+        inventoryAuditing.setActiveInvCount(inventoryRepo.countMktInv());
+        inventoryAuditing.setSoldInvCount(mktSoldCarRepo.getAllMktSoldCarsCount());
+        inventoryAuditing.setExpireInvCount(inventoryRepo.countMktExpireInv());
+        inventoryAuditing.setModifiedBy(AppraisalConstants.SYSTEM);
+
+        //delete all active and sold inv from mkt schema
+        mktSoldCarRepo.deleteAll();
+        inventoryRepo.deleteAll();
+
+        //update schedular end date
+        EMkScheduler schedulerByEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_INV_FACTORY_SCH);
+        schedulerByEvent.setEndDate(new Date());
+        schedulerRepo.save(schedulerByEvent);
+
+
     }
 
     private EInventoryVehicles setBuildParam(LinkedHashMap<?, ?> invInfo, LinkedHashMap<?, ?> build, LinkedHashMap<?, ?> dealer) {
@@ -884,11 +962,6 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
 
     }
-
-
-
-
-
 
 
 }

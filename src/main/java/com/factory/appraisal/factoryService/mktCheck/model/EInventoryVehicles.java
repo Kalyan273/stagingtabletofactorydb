@@ -90,4 +90,8 @@ public class EInventoryVehicles extends TransactionEntity{
     private String vehiclePic8;
     private String vehiclePic9;
 
+    @Column(name = "inv_status")
+    private String invStatus;
+
+
 }

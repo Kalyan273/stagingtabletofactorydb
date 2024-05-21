@@ -717,6 +717,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
                 auditConfiguration.setAuditorName(vehicle.getUser().getFirstName());
 
+                vehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
                 eAppraiseVehicleRepo.save(vehicle);
                 log.info("draft appraisal dtls saved ");
 
@@ -1353,6 +1354,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
                        }
 
                     }
+                    mveToInvt.setMkModifiedBy(AppraisalConstants.SYSTEM);
                     eAppraiseVehicleRepo.save(mveToInvt);
                     response.setMessage("added to inventory Successfully");
                     response.setCode(HttpStatus.OK.value());

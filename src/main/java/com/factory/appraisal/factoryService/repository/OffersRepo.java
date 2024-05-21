@@ -191,4 +191,9 @@ public interface OffersRepo extends JpaRepository<EOffers,Long> {
 
     @Query("select o from EOffers o where o.valid= true and o.status.statusCode not in (:code1,:code2)")
     List<EOffers> getOffer(@Param("code1") String statusCode1,@Param("code2") String statusCode2);
+
+
+    @Query("update EOffers o set o.status.id=8 where o.appRef.id=:appRefId ")
+    @Modifying
+    int updateOfferSetSold(Long appRefId);
 }
