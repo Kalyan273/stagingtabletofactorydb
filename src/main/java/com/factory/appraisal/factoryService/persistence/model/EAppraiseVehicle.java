@@ -174,6 +174,11 @@ public class EAppraiseVehicle extends TransactionEntity {
     @Where(clause = "IS_ACTIVE = true")
     private EShipment shipment;
 
-//    private String fromMkt;
+   private Boolean  fromMkt = Boolean.FALSE;
+
+    private String mktStatus;
+
+    @Column(name = "mk_modified_by")
+    private String mkModifiedBy;
 //
 }

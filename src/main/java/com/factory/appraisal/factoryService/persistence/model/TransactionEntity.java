@@ -37,8 +37,10 @@ public class TransactionEntity extends IdEntity {
 
 
     @Column(name = "modified_by")
-    @LastModifiedBy
+    //@LastModifiedBy
     private String modifiedBy;
+
+
 
     @Column(name = "modified_on")
     @LastModifiedDate

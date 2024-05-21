@@ -1,6 +1,7 @@
 package com.factory.appraisal.factoryService.config;
 
 
+import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.services.OffersService;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import org.jobrunr.jobs.mappers.JobMapper;
@@ -31,6 +32,8 @@ public class JobRunrConfig {
     public void scheduleRecurrently() {
         jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
         jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, z -> z.getMarketCheckDataToSaveDealers());
+        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(Cron.hourly(), MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
     }
 
 /*    @Bean
