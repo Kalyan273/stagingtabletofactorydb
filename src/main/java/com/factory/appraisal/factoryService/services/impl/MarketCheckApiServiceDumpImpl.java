@@ -787,6 +787,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     @Override
     public Response getMarketCheckDataToSaveDealers() throws IOException, AppraisalException {
 
+        log.info("Maret check Data started");
         EMkScheduler findEvent = schedulerRepo.findByEvent(AppraisalConstants.MC_DEALER_DUMP_SCH);
         Response response=new Response();
         if(findEvent.getValid() == true){
