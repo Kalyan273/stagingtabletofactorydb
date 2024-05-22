@@ -230,7 +230,7 @@
 		<dependency>
 			<groupId>org.jobrunr</groupId>
 			<artifactId>jobrunr-spring-boot-2-starter</artifactId>
-			<version>6.3.3</version>
+			<version>7.1.2</version>
 		</dependency>
 	</dependencies>
 

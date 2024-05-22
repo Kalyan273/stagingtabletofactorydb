@@ -21,4 +21,12 @@ public interface MktInventoryRepo extends JpaRepository<EInventoryVehicles,Long>
 
     @Query(value = "select e from EInventoryVehicles e ORDER BY e.vin DESC")
     Page<EInventoryVehicles> getAllInv(Pageable pageable);
+
+    @Query("select count (*) from  EInventoryVehicles e where e.valid=true  and e.invStatus='NEW' ")
+    Long countMktInv();
+
+    @Query("select count (*) from  EInventoryVehicles e where e.valid=true and e.invStatus='UPDATED' ")
+    Long countMktExpireInv();
+
+
 }

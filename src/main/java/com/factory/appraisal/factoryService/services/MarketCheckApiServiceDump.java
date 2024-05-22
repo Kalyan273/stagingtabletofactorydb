@@ -37,4 +37,6 @@ public interface MarketCheckApiServiceDump {
 
     Response mkFacDlrInvDumpfrNonMem() throws AppraisalException, IOException;
 
+    Response getMarketCheckDataToSaveDealers() throws IOException, AppraisalException;
+
 }

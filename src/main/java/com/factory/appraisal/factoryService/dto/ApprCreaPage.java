@@ -283,7 +283,7 @@ public class ApprCreaPage extends Response {
     //test drive measurement
 
     List<TestDriveMes>testDrive;
-//    private String fromMkt;
+    private Boolean  fromMkt = Boolean.FALSE;
 
 
 

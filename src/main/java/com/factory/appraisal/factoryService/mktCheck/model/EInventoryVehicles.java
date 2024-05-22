@@ -93,4 +93,5 @@ public class EInventoryVehicles extends TransactionEntity{
     @Column(name = "inv_status")
     private String invStatus="NEW";
 
+
 }

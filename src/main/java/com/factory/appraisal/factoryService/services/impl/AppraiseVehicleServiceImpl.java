@@ -299,6 +299,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
 
     @Override
+    @Transactional
     public Response addAppraiseVehicle(ApprCreaPage apprCreaPage, UUID userId,String apprStatus) throws AppraisalException {
 
                 EAppraiseVehicle eAppraiseVehicle = appraisalVehicleMapper.appCreaPageToEAppVehCond(apprCreaPage);
@@ -513,6 +514,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
 
     @Override
+    @Transactional
     public Response updateAppraisal(ApprCreaPage page, Long apprId) throws AppraisalException, IOException, JRException, JDOMException {
 
         EAppraiseVehicle vehicle = eAppraiseVehicleRepo.getAppraisalById(apprId);
@@ -717,6 +719,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
                 auditConfiguration.setAuditorName(vehicle.getUser().getFirstName());
 
+                vehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
                 eAppraiseVehicleRepo.save(vehicle);
                 log.info("draft appraisal dtls saved ");
 
@@ -1353,6 +1356,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
                        }
 
                     }
+                    mveToInvt.setMkModifiedBy(AppraisalConstants.SYSTEM);
                     eAppraiseVehicleRepo.save(mveToInvt);
                     response.setMessage("added to inventory Successfully");
                     response.setCode(HttpStatus.OK.value());

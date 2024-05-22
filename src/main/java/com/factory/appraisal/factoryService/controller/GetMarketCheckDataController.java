@@ -99,6 +99,12 @@ public class GetMarketCheckDataController {
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 
+    @ApiOperation(value="save marketCheck dealers into our mktchk DB",response = Response.class)
+    @PostMapping("/saveDealersFromMktCheck")
+    public ResponseEntity<Response> saveDealersFromMktCheck() throws AppraisalException, IOException {
+        return new ResponseEntity<>(service.getMarketCheckDataToSaveDealers(),HttpStatus.OK);
+    }
+
 
     @PostMapping("/addInvFrmMktForFacMem")
     public ResponseEntity<Response> addInvFrmMktForFacMem() throws AppraisalException, IOException{
