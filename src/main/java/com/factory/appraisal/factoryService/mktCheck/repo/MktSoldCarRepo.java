@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface MktSolsCar extends JpaRepository<EMkSoldCar,Long> {
+public interface MktSoldCarRepo extends JpaRepository<EMkSoldCar,Long> {
 
 
 }

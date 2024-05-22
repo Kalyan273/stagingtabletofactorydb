@@ -9,19 +9,13 @@ import com.amazonaws.services.s3.S3ClientOptions;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
+import com.factory.appraisal.factoryService.ExceptionHandle.Response;
 import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.dto.*;
-import com.factory.appraisal.factoryService.mktCheck.model.ECities;
-import com.factory.appraisal.factoryService.mktCheck.model.EInventoryVehicles;
-import com.factory.appraisal.factoryService.mktCheck.model.EMkDealerRegistration;
-import com.factory.appraisal.factoryService.mktCheck.repo.FlCitiesRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktDealerRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktInventoryRepo;
-import com.factory.appraisal.factoryService.mktCheck.repo.MktSchedulerRepo;
+import com.factory.appraisal.factoryService.mktCheck.model.*;
+import com.factory.appraisal.factoryService.mktCheck.repo.*;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
-import com.factory.appraisal.factoryService.persistence.model.EAppraiseVehicle;
 import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
-import com.factory.appraisal.factoryService.persistence.model.EUserRegistration;
 import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.util.Readfiles;
@@ -38,7 +32,6 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -53,10 +46,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump {
@@ -73,6 +66,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     private String marketCheckDealerUrl;
     @Value("${market_check_inventory_url}")
     private String marketCheckInvUrl;
+
+    @Value("${market_check_sold_inventory_url}")
+    private String marketChkSolCarUrl;
     @Value("${market_check_url_suffix}")
     private String urlSuffix;
     @Value("${market_check_dealer_url_suffix}")
@@ -123,6 +119,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     @Autowired
     private MktSchedulerRepo schedulerRepo;
+
+    @Autowired
+    private MktSoldCarRepo soldCarRepo;
 
 
     @Transactional
@@ -338,7 +337,6 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     }
 
 
-
     @Transactional
     @Override
     public void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException {
@@ -359,7 +357,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
                 Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
 
-                Integer count = appraiseVehicleRepo.checkAprr(inv.getVin(),dealerId);
+                Integer count = appraiseVehicleRepo.checkAprr(inv.getVin(), dealerId);
                 ApprCreaPage creaPages = null;
                 if (1 != count) {
 
@@ -385,7 +383,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     appraiseVehicleService.addAppraiseVehicle(creaPages, userByDlrId, AppraisalConstants.INVENTORY);
                 } else {
 
-                    Long appraisalId = appraiseVehicleRepo.findAppraisal(inv.getVin(),dealerId);
+                    Long appraisalId = appraiseVehicleRepo.findAppraisal(inv.getVin(), dealerId);
                     creaPages = mapper.invToApprCreaPage(inv);
                     appraiseVehicleService.updateAppraisal(creaPages, appraisalId);
 
@@ -771,19 +769,334 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                 .block();
     }
 
-
-
     @Override
-    public void mkDlrInvDumpSch() {
-            schedulerRepo.findByEvent(AppraisalConstants.MK_DLR_INV_DUMP_SCH);
+    @Transactional
+    public Response mkFacDlrInvDumpfrNonMem() throws AppraisalException, IOException {
+        EMkScheduler byEvent = schedulerRepo.findByEvent(AppraisalConstants.MC_NON_MEM_DLR_INV_SCH);
+        List<Long> allMkDlr = null;
+        Response response = new Response();
+        if (null != byEvent && Boolean.TRUE.equals(byEvent.getValid())) {
+            if (null != byEvent.getEndDate()) {
+                DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENOTNULL);
+                allMkDlr = dealerRepo.getAllNonDlrId();
+                if (null != allMkDlr && !allMkDlr.isEmpty()) {
+                    for (Long facDlrId : allMkDlr) {
+                        operationOnFetchData(facDlrId, dateDto.getToDate(), dateDto.getFromDate(), AppraisalConstants.ENDDATENOTNULL);
+                    }
+                }
+            } else {
+                DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENULL);
+                allMkDlr = dealerRepo.getAllNonDlrId();
+                if (null != allMkDlr && !allMkDlr.isEmpty()) {
+                    for (Long facDlrId : allMkDlr) {
+                        operationOnFetchData(facDlrId, dateDto.getToDate(), dateDto.getFromDate(), AppraisalConstants.ENDDATENULL);
+                    }
+                }
+            }
 
+            byEvent.setStartDate(new Date());
+            byEvent.setEndDate(new Date());
+            schedulerRepo.save(byEvent);
+            response.setStatus(true);
+            response.setCode(HttpStatus.OK.value());
+            response.setMessage("data saved");
+        } else {
+            response.setStatus(false);
+            response.setCode(HttpStatus.FORBIDDEN.value());
+            response.setMessage("scheduler is off");
+        }
+        return response;
 
     }
 
+    @Override
+    @Transactional
+    public Response mkFacDlrInvDumpfrMem() throws AppraisalException, IOException {
+        EMkScheduler byEvent = schedulerRepo.findByEvent(AppraisalConstants.MK_DLR_INV_DUMP_SCH);
+        List<Long> allMkDlr = null;
+        Response response = new Response();
+        if (null != byEvent && Boolean.TRUE.equals(byEvent.getValid())) {
+            if (null != byEvent.getEndDate()) {
+                DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENOTNULL);
+//                DateDto dateDto= new DateDto();
+//                dateDto.setFromDate("20240310");
+//                dateDto.setToDate("20240410");
+                allMkDlr = dealerRepo.getAllDlrId();
+                if (null != allMkDlr && !allMkDlr.isEmpty()) {
+                    for (Long facDlrId : allMkDlr) {
+                        operationOnFetchData(facDlrId, dateDto.getToDate(), dateDto.getFromDate(), AppraisalConstants.ENDDATENOTNULL);
+                    }
+                }
+            } else {
+                //      DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENULL);
+                DateDto dateDto = new DateDto();
+                dateDto.setFromDate("20240310");
+                dateDto.setToDate("20240410");
+                allMkDlr = dealerRepo.getAllDlrId();
+                if (null != allMkDlr && !allMkDlr.isEmpty()) {
+                    for (Long facDlrId : allMkDlr) {
+                        operationOnFetchData(facDlrId, dateDto.getToDate(), dateDto.getFromDate(), AppraisalConstants.ENDDATENULL);
+                    }
+                }
+            }
+            byEvent.setStartDate(new Date());
+            byEvent.setEndDate(new Date());
+            schedulerRepo.save(byEvent);
+            response.setStatus(true);
+            response.setCode(HttpStatus.OK.value());
+            response.setMessage("data saved");
+        } else {
+            response.setStatus(false);
+            response.setCode(HttpStatus.FORBIDDEN.value());
+            response.setMessage("scheduler is off");
+        }
+        return response;
+    }
+
+    private DateDto dateOperation(Date endDate, String occurrence) {
+        DateDto dateDto = new DateDto();
+        if (occurrence.equalsIgnoreCase(AppraisalConstants.ENDDATENOTNULL)) {
+            LocalDate nextDay = LocalDate.parse(endDate.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S")).plusDays(1);
+            String fromDate = nextDay.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String toDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+            dateDto.setFromDate(fromDate);
+            dateDto.setToDate(toDate);
+        } else if (occurrence.equalsIgnoreCase(AppraisalConstants.ENDDATENULL)) {
+            String fromDate = LocalDate.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String toDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            dateDto.setFromDate(fromDate);
+            dateDto.setToDate(toDate);
+        }
+        return dateDto;
+    }
+
+    private void operationOnFetchData(Long dealerId, String toDate, String fromDate, String occurance) throws AppraisalException, IOException {
+
+        List<EInventoryVehicles> inventoryVehicles = new ArrayList<>();
+        List<MktInventory> mktInventoryList = new ArrayList<>();
+
+        if (occurance.equalsIgnoreCase(AppraisalConstants.ENDDATENOTNULL)) {
+            List<EMkSoldCar> soldAndExpiredCars = processForSoldVeh(dealerId, toDate, fromDate);
+            soldCarRepo.saveAll(soldAndExpiredCars);
+            List<EInventoryVehicles> eInventoryVehicles = processForInvVeh(mktInventoryList, dealerId, inventoryVehicles, toDate, fromDate);
+            List<EMkSoldCar> allSoldCars = soldCarRepo.findAll();
+
+            if (!eInventoryVehicles.isEmpty() && !allSoldCars.isEmpty()) {
+
+                Map<String, EMkSoldCar> soldCarMap = allSoldCars.stream()
+                        .collect(Collectors.toMap(EMkSoldCar::getVin, soldCar -> soldCar));
+
+                // Update inventory vehicles status based on sold cars using parallel stream for potential performance improvement
+                List<EInventoryVehicles> updatedVehicles = eInventoryVehicles.parallelStream()
+                        .peek(vehicle -> {
+                            if (soldCarMap.containsKey(vehicle.getVin())) {
+                                vehicle.setInvStatus(AppraisalConstants.UPDATED);
+                            } else {
+                                vehicle.setInvStatus(AppraisalConstants.NEW);
+                            }
+                        })
+                        .collect(Collectors.toList());
 
 
+                inventoryRepo.saveAll(updatedVehicles);
+            }
+        } else if (occurance.equalsIgnoreCase(AppraisalConstants.ENDDATENULL)) {
+            List<EInventoryVehicles> eInventoryVehicles = processForInvVeh(mktInventoryList, dealerId, inventoryVehicles, toDate, fromDate);
+            inventoryRepo.saveAll(eInventoryVehicles);
+        }
+
+    }
+
+    private List<EInventoryVehicles> processForInvVeh(List<MktInventory> mktInventoryList, Long dealerId, List<EInventoryVehicles> inventoryVehicles, String toDate, String fromDate) throws AppraisalException, IOException {
+        MktInventory mktInventory = null;
+        EInventoryVehicles creaPage = null;
+
+        int start = 0;
+        int rows = 50;
+
+        mktInventory = fetchInvData(dealerId, start, rows, toDate, fromDate);
+
+        if (null != mktInventory && null != mktInventory.getListings() && !mktInventory.getListings().isEmpty()) {
+            log.info("num of inv:{}", mktInventory.getNoOfInv());
+            log.info("dealerId:{}", dealerId);
+            mktInventoryList.add(mktInventory);
+        }
+
+        assert mktInventory != null;
+        int numFound = mktInventory.getNoOfInv();
+        int noOfTime;
+        if (numFound % 50 == 0) {
+            noOfTime = (numFound / 50);
+        } else {
+            noOfTime = (numFound / 50) + 1;
+        }
 
 
+        for (int j = 0; j < noOfTime; j++) {
+
+            if (j > 0) {
+                start += rows;
+                mktInventory = fetchInvData(dealerId, start, rows, toDate, fromDate);
+                if (null != mktInventory && null != mktInventory.getListings() && !mktInventory.getListings().isEmpty()) {
+                    mktInventoryList.add(mktInventory);
+                }
+
+            }
+        }
+
+        if (!mktInventoryList.isEmpty()) {
+
+            for (int i = 0; i < mktInventoryList.size(); i++) {
+
+                List<Object> listings = mktInventoryList.get(i).getListings();
+                for (int a = 0; a < listings.size(); a++) {
+
+                    LinkedHashMap<?, ?> invInfo = (LinkedHashMap<?, ?>) listings.get(a);
+                    LinkedHashMap<?, ?> build = (LinkedHashMap<?, ?>) invInfo.get("build");
+                    LinkedHashMap<?, ?> media = (LinkedHashMap<?, ?>) invInfo.get("media");
+                    LinkedHashMap<?, ?> dealer = (LinkedHashMap<?, ?>) invInfo.get("dealer");
+
+
+                    creaPage = setBuildParam(invInfo, build, dealer);
+                    if (null != media) {
+                        List<String> picList = (List<String>) media.get("photo_links_cached");
+
+                        creaPage = setMedia(picList, creaPage);
+                    }
+                    inventoryVehicles.add(creaPage);
+
+
+                }
+            }
+        }
+
+        return inventoryVehicles;
+    }
+
+    public MktInventory fetchInvData(Long dealerId, int start, int rows, String toDate, String fromDate) {
+        log.info("fetchInvData started");
+        WebClient webClient = WebClient.create();
+
+
+        return webClient.get()
+                .uri(marketCheckInvUrl + api_key + AppraisalConstants.AND + AppraisalConstants.DEALER_ID + AppraisalConstants.EQUAL + dealerId + AppraisalConstants.AND +
+                        AppraisalConstants.CAR_TYPE + AppraisalConstants.EQUAL + AppraisalConstants.USED + AppraisalConstants.AND + AppraisalConstants.FIRST_SEEN_RANGE + fromDate + "-" + toDate +
+                        AppraisalConstants.AND + AppraisalConstants.OWNEDTRUE + AppraisalConstants.AND +
+                        AppraisalConstants.START + AppraisalConstants.EQUAL + start + AppraisalConstants.AND + AppraisalConstants.ROWS + AppraisalConstants.EQUAL + rows)
+                .retrieve()
+                .bodyToFlux(DataBuffer.class)
+                .reduce(DataBuffer::write)
+                .map(buffer -> {
+                    try (InputStream inputStream = buffer.asInputStream()) {
+                        // Process the input stream as needed
+                        return objectMapper.readValue(inputStream, MktInventory.class);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        DataBufferUtils.release(buffer);
+                    }
+                })
+                .block();
+    }
+
+    private List<EMkSoldCar> processForSoldVeh(Long dealerId, String toDate, String fromDate) {
+
+        List<MktInventory> mktInvSoldList = new ArrayList<>();
+        List<EMkSoldCar> soldCarList = new ArrayList<>();
+
+        int start = 0;
+        int rows = 50;
+
+        MktInventory mktInventorySold = fetchSoldData(dealerId, toDate, fromDate, start, rows);
+
+
+        if (null != mktInventorySold && null != mktInventorySold.getListings() && !mktInventorySold.getListings().isEmpty()) {
+            log.info("num of inv:{}", mktInventorySold.getNoOfInv());
+            log.info("dealerId:{}", dealerId);
+            mktInvSoldList.add(mktInventorySold);
+        }
+
+        assert mktInventorySold != null;
+        int numFound = mktInventorySold.getNoOfInv();
+        int noOfTime;
+        if (numFound % 50 == 0) {
+            noOfTime = (numFound / 50);
+        } else {
+            noOfTime = (numFound / 50) + 1;
+        }
+        for (int j = 0; j < noOfTime; j++) {
+
+            if (j > 0) {
+                start += rows;
+                mktInventorySold = fetchSoldData(dealerId, toDate, fromDate, start, rows);
+                if (null != mktInventorySold && null != mktInventorySold.getListings() && !mktInventorySold.getListings().isEmpty()) {
+                    mktInvSoldList.add(mktInventorySold);
+                }
+
+            }
+        }
+
+
+        if (!mktInvSoldList.isEmpty()) {
+            for (int i = 0; i < mktInvSoldList.size(); i++) {
+
+
+                List<Object> listings = mktInvSoldList.get(i).getListings();
+                for (int a = 0; a < listings.size(); a++) {
+
+                    LinkedHashMap<?, ?> invInfo = (LinkedHashMap<?, ?>) listings.get(a);
+                    LinkedHashMap<?, ?> build = (LinkedHashMap<?, ?>) invInfo.get("build");
+                    LinkedHashMap<?, ?> dealer = (LinkedHashMap<?, ?>) invInfo.get("dealer");
+
+
+                    EMkSoldCar soldCar = new EMkSoldCar();
+
+                    soldCar.setVin(null != invInfo.get(AppraisalConstants.MKT_VIN) ? invInfo.get(AppraisalConstants.MKT_VIN).toString() : null);
+                    soldCar.setDealerId(null != dealer.get(AppraisalConstants.ID) ? dealer.get(AppraisalConstants.ID).toString() : null);
+                    soldCar.setCity(null!=dealer.get(AppraisalConstants.CITY)? dealer.get(AppraisalConstants.CITY).toString():null);
+                    soldCar.setYear(null != build.get(AppraisalConstants.YEAR) ? Integer.parseInt(build.get(AppraisalConstants.YEAR).toString()) : null);
+                    soldCar.setMake(null != build.get(AppraisalConstants.MAKE) ? build.get(AppraisalConstants.MAKE).toString() : null);
+                    soldCar.setModel(null != build.get(AppraisalConstants.MODEL) ? build.get(AppraisalConstants.MODEL).toString() : null);
+                    soldCar.setTrim((null != build.get(AppraisalConstants.TRIM)) ? build.get(AppraisalConstants.TRIM).toString() : null);
+                    soldCar.setBodyType((null != build.get(AppraisalConstants.BODY_TYPE)) ? build.get(AppraisalConstants.BODY_TYPE).toString() : null);
+                    soldCar.setFuelType(null != build.get(AppraisalConstants.FUEL_TYPE) ? build.get(AppraisalConstants.FUEL_TYPE).toString() : null);
+                    soldCar.setEngine(null != build.get(AppraisalConstants.ENGINE) ? build.get(AppraisalConstants.ENGINE).toString() : null);
+                    soldCar.setDealerId(null != dealer.get(AppraisalConstants.ID) ? dealer.get(AppraisalConstants.ID).toString() : null);
+
+                    soldCarList.add(soldCar);
+
+                }
+            }
+
+        }
+        return soldCarList;
+
+    }
+
+    public MktInventory fetchSoldData(Long dealerId, String toDate, String fromDate, int start, int rows) {
+        log.info("fetchSoldData started");
+        WebClient webClient = WebClient.create();
+
+        return webClient.get()
+                .uri(marketChkSolCarUrl + api_key + AppraisalConstants.AND + AppraisalConstants.FIRST_SEEN_RANGE + fromDate + "-" + toDate + AppraisalConstants.AND +AppraisalConstants.SOLDTRUE+AppraisalConstants.AND +AppraisalConstants.CAR_TYPE + AppraisalConstants.EQUAL + AppraisalConstants.USED +
+                        AppraisalConstants.AND + AppraisalConstants.DEALER_ID + AppraisalConstants.EQUAL + dealerId + AppraisalConstants.AND + AppraisalConstants.START + AppraisalConstants.EQUAL +
+                        start + AppraisalConstants.AND + AppraisalConstants.ROWS + AppraisalConstants.EQUAL + rows + AppraisalConstants.AND+ AppraisalConstants.OWNEDTRUE)
+                .retrieve()
+                .bodyToFlux(DataBuffer.class)
+                .reduce(DataBuffer::write)
+                .map(buffer -> {
+                    try (InputStream inputStream = buffer.asInputStream()) {
+                        // Process the input stream as needed
+                        return objectMapper.readValue(inputStream, MktInventory.class);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        DataBufferUtils.release(buffer);
+                    }
+                })
+                .block();
+    }
 
 
 }

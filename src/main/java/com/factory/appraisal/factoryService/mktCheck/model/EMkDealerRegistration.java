@@ -55,6 +55,7 @@ public class EMkDealerRegistration extends TransactionEntity{
     private String phone;
     private String sellerEmail;
     private String userUuid;
+    private Boolean factoryMember;
 
 
 }

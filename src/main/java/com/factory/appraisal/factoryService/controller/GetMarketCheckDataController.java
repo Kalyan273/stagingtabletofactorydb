@@ -2,6 +2,7 @@ package com.factory.appraisal.factoryService.controller;
 
 import com.factory.appraisal.factoryService.ExceptionHandle.AppraisalException;
 import com.factory.appraisal.factoryService.ExceptionHandle.Response;
+import com.factory.appraisal.factoryService.constants.AppraisalConstants;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
@@ -95,6 +96,20 @@ public class GetMarketCheckDataController {
         Response response=new Response();
         response.setMessage("data added successfully");
         response.setCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+    }
+
+
+    @PostMapping("/addInvFrmMktForFacMem")
+    public ResponseEntity<Response> addInvFrmMktForFacMem() throws AppraisalException, IOException{
+        Response response = service.mkFacDlrInvDumpfrMem();
+        return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/addInvFrmMktForNonFacMem")
+    public ResponseEntity<Response> addInvFrmMktForNonFacMem() throws AppraisalException, IOException{
+        Response response = service.mkFacDlrInvDumpfrNonMem();
+
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 

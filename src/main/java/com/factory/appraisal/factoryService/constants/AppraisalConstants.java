@@ -10,8 +10,17 @@ public class AppraisalConstants {
 
   public static final String FIRST_SEEN_RANGE = "first_seen_range=";
     public static final String MK_DLR_INV_DUMP_SCH = "MK_DLR_INV_DUMP_SCH";
+    public static final String SOLDTRUE = "sold=true";
+    public static final String UPDATED = "UPDATED";
+  public static final String NEW = "NEW";
+  public static final String OWNEDTRUE = "owned=true";
+    public static final String ENDDATENOTNULL = "ENDDATENOTNULL";
+  public static final String ENDDATENULL = "ENDDATENULL";
+  public static final String FACTORYMEMTRUE = "FACTORYMEMTRUE";
+  public static final String FACTORYMEMFALSE = "FACTORYMEMFALSE";
+  public static final String MC_NON_MEM_DLR_INV_SCH = "MC_NON_MEM_DLR_INV_SCH";
 
-    private AppraisalConstants() {
+  private AppraisalConstants() {
   }
     public static final String SEQUENCE_NAME = "mygen";
 

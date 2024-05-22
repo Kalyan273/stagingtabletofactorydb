@@ -4,7 +4,8 @@ server:
 log-path: /opt/tomcat/customlogs/
 market_check_url: http://mc-api.marketcheck.com/v2/decode/car/neovin/
 market_check_dealer_url: https://mc-api.marketcheck.com/v2/dealers/car?
-market_check_inventory_url: https://mc-api.marketcheck.com/v2/search/car/active?
+market_check_inventory_url: https://mc-api.marketcheck.com/v2/car/dealer/inventory/active?
+market_check_sold_inventory_url: https://mc-api.marketcheck.com/v2/search/car/recents?
 market_check_dealer_url_suffix: state=FL&rows=500&country=US
 market_check_inv_url_suffix: car_type=used&owned=true
 market_check_url_suffix: /specs?

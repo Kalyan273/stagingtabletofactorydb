@@ -48,5 +48,9 @@ public interface DealerRegistrationRepo extends JpaRepository<EDealerRegistratio
     EDealerRegistration findDealerByMktDlrID(Long mktDealerId);
 
 
+/*    @Query("select e.mkDealerId from EDealerRegistration e where e.factoryMember= false")
+    List<Long> findAllFacDlr();
 
+    @Query("select e.mkDealerId from EDealerRegistration e where e.factoryMember= false")
+    List<Long> findAllFacNonDlr();*/
 }
