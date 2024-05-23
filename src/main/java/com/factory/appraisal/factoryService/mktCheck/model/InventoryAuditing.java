@@ -36,6 +36,7 @@ public class InventoryAuditing  extends TransactionEntity{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mkt_inv_aud_id_seq")
     @GenericGenerator(name = "mkt_inv_aud_id_seq", strategy= AppraisalConstants.CUSTOM_SEQUENCE_GENERATOR)
     private Long id;
+
     private Long activeInvCount;
     private Long soldInvCount;
     private Long expireInvCount;
