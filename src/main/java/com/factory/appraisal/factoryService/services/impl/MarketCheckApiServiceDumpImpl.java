@@ -418,6 +418,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                                     synSoldCars(eAppraiseVehicle);
                                 } else {
                                     creaPages = mapper.invToApprCreaPage(inv);
+                                    creaPages.setFromMkt(Boolean.TRUE);
                                     appraiseVehicleService.updateAppraisal(creaPages, eAppraiseVehicle.getId());
                                     log.info("record updated for:{}", creaPages.getVinNumber());
                                 }
@@ -465,8 +466,8 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
 
             //delete all active and sold inv from mkt schema
-           /* mktSoldCarRepo.deleteAll();
-            inventoryRepo.deleteAll();*/
+            mktSoldCarRepo.deleteAll();
+            inventoryRepo.deleteAll();
 
             //update schedular end date
             schedulerByEvent.setEndDate(new Date());

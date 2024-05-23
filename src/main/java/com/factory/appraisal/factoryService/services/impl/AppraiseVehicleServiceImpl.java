@@ -605,6 +605,7 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
 
                 }
                 auditConfiguration.setAuditorName(vehicle.getUser().getFirstName());
+                vehicle.setMkModifiedBy(AppraisalConstants.SYSTEM);
                 eAppraiseVehicleRepo.save(vehicle);
                 log.info("appraisal dtls saved ");
 
