@@ -352,7 +352,6 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     }
 
 
-
     @Override
     public void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException {
         EMkScheduler schedulerByEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_INV_FACTORY_SCH);
@@ -363,17 +362,17 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             int pageSize = 500;
             boolean hasNextPage = true;
             while (hasNextPage) {
-                log.info("pageNo :{}",pageNumber);
+                log.info("pageNo :{}", pageNumber);
                 Pageable pageable = PageRequest.of(pageNumber, pageSize);
                 Page<EInventoryVehicles> page = inventoryRepo.getAllInv(pageable); //active inv
                 //sold inv
                 List<String> soldCarsVin = mktSoldCarRepo.getAllMktSoldCars();
                 // Process the current page
                 List<EInventoryVehicles> content = page.getContent();
-                log.info("records in current running Page: {}",content.size() );
+                log.info("records in current running Page: {}", content.size());
                 // Add your processing logic here
 
-                if(!content.isEmpty()) {
+                if (!content.isEmpty()) {
                     for (EInventoryVehicles inv : content) {
 
                         Long dealerId = dlrRegRepo.findDealer(Long.valueOf(inv.getDealerId()));
@@ -461,7 +460,6 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             inventoryAuditing.setExpireInvCount(inventoryRepo.countMktExpireInv());
             inventoryAuditing.setModifiedBy(AppraisalConstants.SYSTEM);
             inventoryAuditingRepo.save(inventoryAuditing);
-
 
 
             //delete all active and sold inv from mkt schema
@@ -899,9 +897,9 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         if (null != byEvent && Boolean.TRUE.equals(byEvent.getValid())) {
             if (null != byEvent.getEndDate()) {
                 DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENOTNULL);
-//                DateDto dateDto= new DateDto();
-//                dateDto.setFromDate("20240310");
-//                dateDto.setToDate("20240410");
+/*                DateDto dateDto= new DateDto();
+                dateDto.setFromDate("20240310");
+                dateDto.setToDate("20240410");*/
                 log.info("getting getAllDlrId from repo");
                 allMkDlr = dealerRepo.getAllDlrId();
                 if (null != allMkDlr && !allMkDlr.isEmpty()) {
@@ -910,10 +908,10 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     }
                 }
             } else {
-//                DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENULL);
-                DateDto dateDto = new DateDto();
-                dateDto.setFromDate("20240310");
-                dateDto.setToDate("20240410");
+                DateDto dateDto = dateOperation(byEvent.getEndDate(), AppraisalConstants.ENDDATENULL);
+/*                DateDto dateDto = new DateDto();
+                dateDto.setFromDate("20240313");
+                dateDto.setToDate("20240413");*/
                 allMkDlr = dealerRepo.getAllDlrId();
                 if (null != allMkDlr && !allMkDlr.isEmpty()) {
                     for (Long facDlrId : allMkDlr) {
@@ -963,15 +961,19 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
         if (occurance.equalsIgnoreCase(AppraisalConstants.ENDDATENOTNULL)) {
             List<EMkSoldCar> soldAndExpiredCars = processForSoldVeh(dealerId, toDate, fromDate);
-            soldCarRepo.saveAll(soldAndExpiredCars);
+            if (!soldAndExpiredCars.isEmpty()) {
+                for (int i = 0; i < soldAndExpiredCars.size(); i += 500) {
+                    List<EMkSoldCar> subList;
+                    if (i + 500 > soldAndExpiredCars.size()) {
+                        subList = soldAndExpiredCars.subList(i, soldAndExpiredCars.size());
+                        soldCarRepo.saveAll(subList);
+                        break;
+                    }
+                    subList = soldAndExpiredCars.subList(i, i + 500);
+                    soldCarRepo.saveAll(subList);
+                }
+            }
 
-           /* int batchSize = 500;
-            // Save in chunks
-            for (int i = 0; i < soldAndExpiredCars.size(); i += batchSize) {
-                int end = Math.min(i + batchSize, soldAndExpiredCars.size());
-                List<EMkSoldCar> batch = soldAndExpiredCars.subList(i, end);
-                soldCarRepo.saveAll(batch);
-            }*/
 
             List<EInventoryVehicles> eInventoryVehicles = processForInvVeh(mktInventoryList, dealerId, inventoryVehicles, toDate, fromDate);
             List<EMkSoldCar> allSoldCars = soldCarRepo.findAll();
@@ -983,8 +985,8 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
                 // Update inventory vehicles status based on sold cars using parallel stream for potential performance improvement
 
-                for (EInventoryVehicles mkInvVeh:eInventoryVehicles) {
-                    if(soldCarMap.containsKey(mkInvVeh.getVin())){
+                for (EInventoryVehicles mkInvVeh : eInventoryVehicles) {
+                    if (soldCarMap.containsKey(mkInvVeh.getVin())) {
                         mkInvVeh.setInvStatus(AppraisalConstants.UPDATED);
                     } else {
                         mkInvVeh.setInvStatus(AppraisalConstants.NEW);
@@ -1000,29 +1002,33 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                         })
                         .collect(Collectors.toList());*/
 
-/*                int batchSize1 = 500;
-
                 // Save in chunks
-                for (int i = 0; i < updatedVehicles.size(); i += batchSize1) {
-                    int end = Math.min(i + batchSize1, updatedVehicles.size());
-                    List<EInventoryVehicles> batch = updatedVehicles.subList(i, end);
-                    inventoryRepo.saveAll(batch);
-                }*/
-                inventoryRepo.saveAll(eInventoryVehicles);
+                for (int i = 0; i < eInventoryVehicles.size(); i += 500) {
+                    List<EInventoryVehicles> subList;
+                    if (i + 500 > eInventoryVehicles.size()) {
+                        subList = eInventoryVehicles.subList(i, eInventoryVehicles.size());
+                        inventoryRepo.saveAll(subList);
+                        break;
+                    }
+                    subList = eInventoryVehicles.subList(i, i + 500);
+                    inventoryRepo.saveAll(subList);
+                }
 
             }
 
         } else if (occurance.equalsIgnoreCase(AppraisalConstants.ENDDATENULL)) {
             List<EInventoryVehicles> eInventoryVehicles = processForInvVeh(mktInventoryList, dealerId, inventoryVehicles, toDate, fromDate);
-/*            int batchSize = 500;
-
             // Save in chunks
-            for (int i = 0; i < eInventoryVehicles.size(); i += batchSize) {
-                int end = Math.min(i + batchSize, eInventoryVehicles.size());
-                List<EInventoryVehicles> batch = eInventoryVehicles.subList(i, end);
-                inventoryRepo.saveAll(batch);*/
-           // }
-            inventoryRepo.saveAll(eInventoryVehicles);
+            for (int i = 0; i < eInventoryVehicles.size(); i += 500) {
+                List<EInventoryVehicles> subList;
+                if (i + 500 > eInventoryVehicles.size()) {
+                    subList = eInventoryVehicles.subList(i, eInventoryVehicles.size());
+                    inventoryRepo.saveAll(subList);
+                    break;
+                }
+                subList = eInventoryVehicles.subList(i, i + 500);
+                inventoryRepo.saveAll(subList);
+            }
         }
     }
 
@@ -1126,6 +1132,8 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
 
     private List<EInventoryVehicles> processForInvVeh(List<MktInventory> mktInventoryList, Long dealerId, List<EInventoryVehicles> inventoryVehicles, String toDate, String fromDate) throws AppraisalException, IOException {
         log.info("processForInvVeh started");
+        log.info("toDate:{}", toDate);
+        log.info("fromDate:{}", fromDate);
         MktInventory mktInventory = null;
         EInventoryVehicles creaPage = null;
 
