@@ -30,7 +30,7 @@ appraisal_form_path: src\\main\\resources\\AppraisalFormJR.jrxml
 #get-link: http://localhost:8082/appraisal/getpic1?pic1=
 get-link: https://services-dev.keyassure.live/appraisal/getpic1?pic1=
 cron.schedule.expression: "0 */50 * * * *"
-cron.schedule.dealerRegFromMktChck: "0 */1 * * * *"
+cron.schedule.dealerRegFromMktChck: "0 */50 * * * *"
 identityServerAuth: YWRtaW46YWRtaW4=
 
 
@@ -42,6 +42,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: keyassureadmin
     password: HxH50y8rpp$j
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 10
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQL94Dialect
     hibernate:
