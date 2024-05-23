@@ -30,10 +30,12 @@ public class JobRunrConfig {
 
     @PostConstruct
     public void scheduleRecurrently() {
-    /*    jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
-        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, z -> z.getMarketCheckDataToSaveDealers());
-        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);*/
-        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(Cron.monthly(), MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
+
+        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
+//        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, z -> z.getMarketCheckDataToSaveDealers());
+        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(Cron.hourly(), MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
+
     }
 
 /*    @Bean
