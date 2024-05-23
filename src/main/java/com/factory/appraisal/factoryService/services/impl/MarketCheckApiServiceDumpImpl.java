@@ -352,13 +352,13 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
     }
 
 
-    @Transactional
+
     @Override
     public void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException {
         EMkScheduler schedulerByEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_INV_FACTORY_SCH);
         if (null != schedulerByEvent && schedulerByEvent.getValid()) {
             schedulerByEvent.setStartDate(new Date());
-          //  EMkScheduler mkSchedulerSave = schedulerRepo.save(schedulerByEvent);
+
             int pageNumber = 0;
             int pageSize = 500;
             boolean hasNextPage = true;
