@@ -119,5 +119,12 @@ public class GetMarketCheckDataController {
         return new ResponseEntity<>(response,HttpStatus.ACCEPTED);
     }
 
+    @PostMapping("/mktInvToAppr")
+    public ResponseEntity<Response> mktInvToAppr() throws AppraisalException, IOException, JRException, JDOMException {
+      service.storeDataFromMkInventoryToAppr();
+
+        return new ResponseEntity<>(null,HttpStatus.ACCEPTED);
+    }
+
 
 }

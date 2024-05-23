@@ -356,7 +356,6 @@ public class AppraiseVehicleServiceImpl implements AppraiseVehicleService {
                 }
 
                 EUserRegistration userById = userRegistrationRepo.findUserById(apprCreaPage.getDealershipUserNames());
-
                 eAprVehImg.setTdStatus(eApprTestDrSts);
                 if(null != eApprTestDrSts) {
                     eApprTestDrSts.setAprVehImg(eAprVehImg);
