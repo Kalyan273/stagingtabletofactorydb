@@ -28,14 +28,17 @@ public class JobRunrConfig {
     @Value("${cron.schedule.dealerRegFromMktChck}")
     private String dealerRegFromMktChck;
 
+    @Value("${cron. syncDlrInvFactorySch}")
+    private String syncDlrInvFactorySch;
+
     @PostConstruct
     public void scheduleRecurrently() {
 
-        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, x -> x.myScheduledTask());
-//        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, z -> z.getMarketCheckDataToSaveDealers());
         jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
-        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(Cron.hourly(), MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
-
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, MarketCheckApiServiceDump::getMarketCheckDataToSaveDealers);
+        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(syncDlrInvFactorySch , MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
+        
     }
 
 /*    @Bean
