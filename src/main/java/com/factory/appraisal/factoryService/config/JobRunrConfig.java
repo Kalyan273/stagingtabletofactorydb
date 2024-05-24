@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 
-//@Configuration
+@Configuration
 public class JobRunrConfig {
     @Autowired
     private JobScheduler jobScheduler;
@@ -31,21 +31,19 @@ public class JobRunrConfig {
     @Value("${cron. syncDlrInvFactorySch}")
     private String syncDlrInvFactorySch;
 
+    @Value("${cron. invDumpFrFacMem}")
+    private String invDumpFrFacMem;
+    @Value("${cron. invDumpFrFacNonMem}")
+    private String invDumpFrFacNonMem;
+
     @PostConstruct
     public void scheduleRecurrently() {
-
-        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
-        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, MarketCheckApiServiceDump::getMarketCheckDataToSaveDealers);
-        jobScheduler.<OffersService>scheduleRecurrently(cronExpression, OffersService::myScheduledTask);
-        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(syncDlrInvFactorySch , MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
         
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(dealerRegFromMktChck, MarketCheckApiServiceDump::getMarketCheckDataToSaveDealers);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(syncDlrInvFactorySch , MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(invDumpFrFacMem , MarketCheckApiServiceDump::mkFacDlrInvDumpfrMem);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(invDumpFrFacNonMem , MarketCheckApiServiceDump::mkFacDlrInvDumpfrNonMem);
     }
 
-/*    @Bean
-    public StorageProvider storageProvider(JobMapper jobMapper) {
-        InMemoryStorageProvider storageProvider = new InMemoryStorageProvider();
-        storageProvider.setJobMapper(jobMapper);
-        return storageProvider;
-    }*/
 
 }
