@@ -862,6 +862,7 @@ public interface AppraisalVehicleMapper {
     @Mapping(source = "sellerEmail",target = "email")
     @Mapping(target = "name",expression = "java(setUsernameAsUrlPre(mkDealer))")
     @Mapping(target = "password",constant = "Dealer@123")
+    @Mapping(source = "website", target = "inventoryUrl")
     DealerRegistration eMkDealerRegistrationToEDealerReg(EMkDealerRegistration mkDealer);
     List<DealerRegistration> eMkDealerRegistrationToEDealerReg(List<EMkDealerRegistration> mkDealer);
 
@@ -899,15 +900,18 @@ public interface AppraisalVehicleMapper {
 
     List< ApprCreaPage> invToApprCreaPage(List<EInventoryVehicles> inventoryVehicles);
 
-    default String setUsernameAsUrlPre(EMkDealerRegistration mkDealer){
-        String[] uName =mkDealer.getWebsite().split("[.]");
-        String userName="";
-            for (int i=0;i<uName.length-1;i++) {
-                userName+=uName[i];
-            }
-            return userName.toLowerCase();
+    default String setUsernameAsUrlPre(EMkDealerRegistration mkDealer) {
+        // Extract the website from the mkDealer object
+        String website = mkDealer.getWebsite();
 
+        // Remove '.com' and any other special characters (., -)
+        String userName = website.replace("\\.com", "").replaceAll("[.-]", "")
+                .replace("\\.net","").replace("\\.biz","")
+                .replace("\\.us","").replace("\\.info","");
+
+        return userName.toLowerCase();
     }
+
 
     EMkDealerRegistration dealerToEMkDealerReg(DealerRegistration dealer);
 }

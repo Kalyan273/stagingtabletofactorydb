@@ -34,9 +34,17 @@ public interface MktDealerRepo extends JpaRepository<EMkDealerRegistration,Long>
     @Query(value = "SELECT e FROM EMkDealerRegistration e WHERE e.userUuid IS NULL")
     List<EMkDealerRegistration> findDealerWthOutUUID();
 
+
     @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryMember= true")
     List<Long> getAllDlrId();
 
     @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryMember= false")
     List<Long> getAllNonDlrId();
+
+    @Query(value = "SELECT e FROM EMkDealerRegistration e WHERE e.mkDealerId=:mkDealerId")
+    EMkDealerRegistration findMktDlrBymktdlrId(String mkDealerId);
+
+    @Query(value = "SELECT e FROM EMkDealerRegistration e WHERE e.city in ('Cape Coral','Cocoa','Dade City') and e.valid=true")
+    List<EMkDealerRegistration> findByCity();
+
 }

@@ -70,4 +70,7 @@ public interface UserRegistrationRepo extends JpaRepository<EUserRegistration,Lo
     EUserRegistration findByUserName(UUID userId);
     @Query(value = "select e from EUserRegistration e where e.id between :start and :end and e.valid=true  ")
     List<EUserRegistration> findByRange( UUID start,UUID end );
+
+    @Query(value = "SELECT u from EUserRegistration u WHERE u.userName=:website")
+    EUserRegistration findByWebsiteName(String website);
 }

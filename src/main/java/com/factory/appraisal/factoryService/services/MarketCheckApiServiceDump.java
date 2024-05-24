@@ -9,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import javax.mail.MessagingException;
 import java.io.IOException;
-import java.util.UUID;
 
 public interface MarketCheckApiServiceDump {
 
@@ -33,10 +32,15 @@ public interface MarketCheckApiServiceDump {
     void storeDataFromMkInventoryToAppr() throws AppraisalException, JRException, IOException, JDOMException;
 
 
+
     Response mkFacDlrInvDumpfrMem() throws AppraisalException, IOException;
 
     Response mkFacDlrInvDumpfrNonMem() throws AppraisalException, IOException;
 
     Response getMarketCheckDataToSaveDealers() throws IOException, AppraisalException;
 
+
+
+
+    Response syncMkDlrToFactorySch() throws AppraisalException, MessagingException, TemplateException, IOException;
 }

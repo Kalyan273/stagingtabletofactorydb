@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Author("Yogesh Kumar V")
@@ -47,6 +48,15 @@ public interface DealerRegistrationRepo extends JpaRepository<EDealerRegistratio
     @Query(value = "select e from EDealerRegistration e where e.mkDealerId=:mktDealerId")
     EDealerRegistration findDealerByMktDlrID(Long mktDealerId);
 
+    @Query(value = "select e from EDealerRegistration e where e.name=:userName")
+    EDealerRegistration findDealerByMktUserName(String userName);
+
+
+    @Query(value = "select e from EDealerRegistration e where e.mkDealerId is not null and e.modifiedOn between :endDate and :todayDate")
+    List<EDealerRegistration> findBydateRange(Date todayDate, Date endDate);
+
+    @Query(value = "select e from EDealerRegistration e where e.inventoryUrl=:website")
+    EDealerRegistration findByWebsiteName(String website);
 
 /*    @Query("select e.mkDealerId from EDealerRegistration e where e.factoryMember= false")
     List<Long> findAllFacDlr();
