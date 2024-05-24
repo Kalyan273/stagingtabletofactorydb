@@ -471,6 +471,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                 }
                 // Check if there's a next page
                 hasNextPage = page.hasNext();
+
                 // Increase pageNumber for the next iteration
                 pageNumber++;
             }
@@ -480,6 +481,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             inventoryAuditing.setActiveInvCount(inventoryRepo.countMktInv());
             inventoryAuditing.setSoldInvCount(mktSoldCarRepo.getAllMktSoldCarsCount());
             inventoryAuditing.setExpireInvCount(inventoryRepo.countMktExpireInv());
+            inventoryAuditing.setCreatedBy(AppraisalConstants.SYSTEM);
             inventoryAuditing.setModifiedBy(AppraisalConstants.SYSTEM);
             inventoryAuditingRepo.save(inventoryAuditing);
 
