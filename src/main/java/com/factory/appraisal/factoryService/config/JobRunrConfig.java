@@ -35,6 +35,8 @@ public class JobRunrConfig {
     private String invDumpFrFacMem;
     @Value("${cron. invDumpFrFacNonMem}")
     private String invDumpFrFacNonMem;
+    @Value("${cron.syncDlrToFactorySch}")
+    private String syncDlrToFactorySch;
 
     @PostConstruct
     public void scheduleRecurrently() {
@@ -43,6 +45,7 @@ public class JobRunrConfig {
         jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(syncDlrInvFactorySch , MarketCheckApiServiceDump::storeDataFromMkInventoryToAppr);
         jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(invDumpFrFacMem , MarketCheckApiServiceDump::mkFacDlrInvDumpfrMem);
         jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(invDumpFrFacNonMem , MarketCheckApiServiceDump::mkFacDlrInvDumpfrNonMem);
+        jobScheduler.<MarketCheckApiServiceDump>scheduleRecurrently(syncDlrToFactorySch , MarketCheckApiServiceDump::syncMkDlrToFactorySch);
     }
 
 

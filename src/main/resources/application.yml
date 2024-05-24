@@ -34,6 +34,7 @@ cron.schedule.dealerRegFromMktChck: "0 */50 * * * *"
 cron. syncDlrInvFactorySch:  "0 */50 * * * *"
 cron. invDumpFrFacMem:  "0 */50 * * * *"
 cron. invDumpFrFacNonMem:  "0 */50 * * * *"
+cron.syncDlrToFactorySch:  "0 */50 * * * *"
 identityServerAuth: YWRtaW46YWRtaW4=
 
 
