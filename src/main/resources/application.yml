@@ -32,6 +32,8 @@ get-link: https://services-dev.keyassure.live/appraisal/getpic1?pic1=
 cron.schedule.expression: "0 */50 * * * *"
 cron.schedule.dealerRegFromMktChck: "0 */50 * * * *"
 cron. syncDlrInvFactorySch:  "0 */50 * * * *"
+cron. invDumpFrFacMem:  "0 */50 * * * *"
+cron. invDumpFrFacNonMem:  "0 */50 * * * *"
 identityServerAuth: YWRtaW46YWRtaW4=
 
 
