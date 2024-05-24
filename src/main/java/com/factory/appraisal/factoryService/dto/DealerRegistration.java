@@ -107,6 +107,9 @@ public class DealerRegistration extends Response {
 /*    @Size(max = 30,message = "length must be less than equal to 30 characters")
     @NotNull*/
     private String corporationName;
+
+    private String inventoryUrl;
+
     @NotNull
     private Long roleId;
     private UUID userId;
@@ -118,5 +121,6 @@ public class DealerRegistration extends Response {
     private Role roleOfUser;
     private String compName;
     private UUID dealerAdmin;
+    private String website;
 
 }

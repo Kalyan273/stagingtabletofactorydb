@@ -89,6 +89,7 @@ public class EDealerRegistration extends TransactionEntity {
     private String status;
      @Column(name = "factory_non_member")
     private Boolean factoryMember;
+    private String inventoryUrl;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @ManyToOne(targetEntity = ECompany.class, fetch = FetchType.LAZY)

@@ -371,6 +371,7 @@ public class AppraisalConstants {
     public static final String EVENT_MKT_DATA_SYNC_TO_FACTORY = "mkt_data_sync_to_factory";
     public static final String EVENT_KEYASSURE_DB_CLEANUP = "keyassure_db_cleanup ";
     public static final String EVENT_MARKETCHECK_DB_CLEANUP = "marketcheck_db_cleanup";
+    public static final String SYNC_DLR_TO_FACTORY_SCH = "SYNC_DLR_TO_FACTORY_SCH";
 
     public static String USERNAME = "username";
     public static final String STREETADR = "streetAdr";

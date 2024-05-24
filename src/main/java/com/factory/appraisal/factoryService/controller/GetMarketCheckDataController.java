@@ -39,6 +39,7 @@ public class GetMarketCheckDataController {
     }
 
 
+
     @ApiOperation(value="save marketCheck dealers into our mktchk DB",response = Response.class)
     @PostMapping("/saveDealersFromMktCheck")
     public ResponseEntity<Response> saveDealersFromMktCheck() throws AppraisalException, IOException {
@@ -61,9 +62,15 @@ public class GetMarketCheckDataController {
 
     @PostMapping("/mktInvToAppr")
     public ResponseEntity<Response> mktInvToAppr() throws AppraisalException, IOException, JRException, JDOMException {
-      service.storeDataFromMkInventoryToAppr();
+        service.storeDataFromMkInventoryToAppr();
 
-        return new ResponseEntity<>(null,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+    }
+    @PostMapping("/syncMktDataTofacDB")
+    public ResponseEntity<Response> syncMktDataTofacDB() throws AppraisalException, MessagingException, TemplateException, IOException {
+        Response response = service.syncMkDlrToFactorySch();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
     }
 
 

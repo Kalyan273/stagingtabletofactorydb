@@ -20,6 +20,7 @@ import com.factory.appraisal.factoryService.mktCheck.model.*;
 import com.factory.appraisal.factoryService.mktCheck.repo.*;
 import com.factory.appraisal.factoryService.persistence.mapper.AppraisalVehicleMapper;
 import com.factory.appraisal.factoryService.persistence.model.EAppraiseVehicle;
+import com.factory.appraisal.factoryService.persistence.model.EDealerRegistration;
 import com.factory.appraisal.factoryService.repository.*;
 import com.factory.appraisal.factoryService.services.MarketCheckApiServiceDump;
 import com.factory.appraisal.factoryService.util.Readfiles;
@@ -44,6 +45,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -230,6 +232,45 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
                     }
                 })
                 .block();
+    }
+
+    @Transactional
+    @Override
+    public void storeDataFromMkDealerToDealerReg() throws AppraisalException, MessagingException, TemplateException, IOException, MessagingException {
+        List<EMkDealerRegistration> dealerWthOutUUID = dealerRepo.findDealerWthOutUUID();
+        List<DealerRegistration> dealerRegistrations = mapper.eMkDealerRegistrationToEDealerReg(dealerWthOutUUID);
+        for (DealerRegistration dealer : dealerRegistrations) {
+            EDealerRegistration byWebsiteName = dlrRegRepo.findByWebsiteName(dealer.getWebsite());
+            EMkDealerRegistration dlrByMktId = dealerRepo.findDlrByMktId(dealer.getMkDealerId().toString());
+
+            if (null == byWebsiteName) {
+                Long roleIdOfD1 = roleRepo.findRoleIdOfD1User();
+                dealer.setRoleId(roleIdOfD1);
+                String uuid = dealerRegistrationService.createDealer(dealer);
+                dlrByMktId.setUserUuid(uuid);
+                dealerRepo.save(dlrByMktId);
+            } else {
+                EDealerRegistration dealerByMktDlrID = dlrRegRepo.findDealerByMktDlrID(dealer.getMkDealerId());
+                dealerByMktDlrID.setMkDealerId(dealer.getMkDealerId());
+                dealerByMktDlrID.setFactoryMember(Boolean.TRUE);
+                dlrByMktId.setUserUuid(byWebsiteName.getId().toString());
+                dealerRepo.save(dlrByMktId);
+                dlrRegRepo.save(dealerByMktDlrID);
+            }
+
+        }
+    }
+
+    public void getAllfacOnBordedDlr(Date endDate) {
+        Date todayDate = new Date();
+        List<EDealerRegistration> bydateRange = dlrRegRepo.findBydateRange(todayDate, endDate);
+        for (EDealerRegistration dealer : bydateRange) {
+            UUID userByDlrId = userRepo.findUserByDlrId(dealer.getId());
+            EMkDealerRegistration mktDlrBymktdlrId = dealerRepo.findMktDlrBymktdlrId(dealer.getMkDealerId().toString());
+            mktDlrBymktdlrId.setUserUuid(userByDlrId.toString());
+            mktDlrBymktdlrId.setFactoryMember(Boolean.TRUE);
+            dealerRepo.save(mktDlrBymktdlrId);
+        }
     }
 
 
@@ -1128,6 +1169,33 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             appraiseVehicleRepo.save(eAppraiseVehicle);
         }
 
+    }
+    @Transactional
+    @Override
+    public Response syncMkDlrToFactorySch() throws AppraisalException, MessagingException, TemplateException, IOException {
+        Response response = new Response();
+        EMkScheduler byEvent = schedulerRepo.findByEvent(AppraisalConstants.SYNC_DLR_TO_FACTORY_SCH);
+        if (byEvent.getValid().equals(Boolean.TRUE)) {
+            byEvent.setStartDate(new Date());
+            storeDataFromMkDealerToDealerReg();
+            Date endDate = byEvent.getEndDate();
+            if (null != endDate) {
+                getAllfacOnBordedDlr(endDate);
+            } else {
+                getAllfacOnBordedDlr(new Date());
+            }
+            byEvent.setEndDate(new Date());
+            schedulerRepo.save(byEvent);
+            response.setCode(HttpStatus.OK.value());
+            response.setStatus(Boolean.TRUE);
+            response.setMessage("Syncing Successfully done");
+            return response;
+        } else {
+            response.setCode(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(Boolean.FALSE);
+            response.setMessage("Schedule Event is not Active");
+            return response;
+        }
     }
 
 
