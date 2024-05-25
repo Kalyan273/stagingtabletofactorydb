@@ -1172,7 +1172,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
         }
 
     }
-    @Transactional
+
     @Override
     public Response syncMkDlrToFactorySch() throws AppraisalException, MessagingException, TemplateException, IOException {
         Response response = new Response();

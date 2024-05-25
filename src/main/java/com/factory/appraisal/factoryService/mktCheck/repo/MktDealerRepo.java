@@ -35,10 +35,10 @@ public interface MktDealerRepo extends JpaRepository<EMkDealerRegistration,Long>
     List<EMkDealerRegistration> findDealerWthOutUUID();
 
 
-    @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryMember= true")
+    @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryNonMember= true")
     List<Long> getAllDlrId();
 
-    @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryMember= false")
+    @Query(value = "select e.mkDealerId from EMkDealerRegistration e where e.factoryNonMember= false")
     List<Long> getAllNonDlrId();
 
     @Query(value = "SELECT e FROM EMkDealerRegistration e WHERE e.mkDealerId=:mkDealerId")
