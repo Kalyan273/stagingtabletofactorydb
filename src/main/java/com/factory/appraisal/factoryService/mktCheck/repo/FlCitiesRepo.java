@@ -14,6 +14,6 @@ import java.util.List;
 public interface FlCitiesRepo extends JpaRepository<ECities,Long> {
 
 
-    @Query(value = "select e.name from ECities e order by e.name")
+    @Query(value = "select e.name from ECities e  where e.valid=true order by e.name")
     List<String> getCityNames();
 }
