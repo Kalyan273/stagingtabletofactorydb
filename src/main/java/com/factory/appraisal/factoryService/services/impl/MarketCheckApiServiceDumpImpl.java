@@ -252,7 +252,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             } else {
                 EDealerRegistration dealerByMktDlrID = dlrRegRepo.findDealerByMktDlrID(dealer.getMkDealerId());
                 dealerByMktDlrID.setMkDealerId(dealer.getMkDealerId());
-                dealerByMktDlrID.setFactoryMember(Boolean.TRUE);
+                dealerByMktDlrID.setFactoryNonMember(Boolean.TRUE);
                 dlrByMktId.setUserUuid(byWebsiteName.getId().toString());
                 dealerRepo.save(dlrByMktId);
                 dlrRegRepo.save(dealerByMktDlrID);
@@ -268,7 +268,7 @@ public class MarketCheckApiServiceDumpImpl implements MarketCheckApiServiceDump 
             UUID userByDlrId = userRepo.findUserByDlrId(dealer.getId());
             EMkDealerRegistration mktDlrBymktdlrId = dealerRepo.findMktDlrBymktdlrId(dealer.getMkDealerId().toString());
             mktDlrBymktdlrId.setUserUuid(userByDlrId.toString());
-            mktDlrBymktdlrId.setFactoryMember(Boolean.TRUE);
+            mktDlrBymktdlrId.setFactoryNonMember(Boolean.TRUE);
             dealerRepo.save(mktDlrBymktdlrId);
         }
     }

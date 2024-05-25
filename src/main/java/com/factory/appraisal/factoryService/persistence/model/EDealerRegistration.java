@@ -88,7 +88,7 @@ public class EDealerRegistration extends TransactionEntity {
     private String dealerCert;
     private String status;
      @Column(name = "factory_non_member")
-    private Boolean factoryMember;
+    private Boolean factoryNonMember;
     private String inventoryUrl;
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
