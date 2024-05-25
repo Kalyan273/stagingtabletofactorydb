@@ -30,11 +30,11 @@ appraisal_form_path: src\\main\\resources\\AppraisalFormJR.jrxml
 #get-link: http://localhost:8082/appraisal/getpic1?pic1=
 get-link: https://services-dev.keyassure.live/appraisal/getpic1?pic1=
 cron.schedule.expression: "0 */50 * * * *"
-cron.schedule.dealerRegFromMktChck: "0 */50 * * * *"
-cron. syncDlrInvFactorySch:  "0 */50 * * * *"
-cron. invDumpFrFacMem:  "0 */50 * * * *"
-cron. invDumpFrFacNonMem:  "0 */50 * * * *"
-cron.syncDlrToFactorySch:  "0 */50 * * * *"
+cron.schedule.dealerRegFromMktChck: "0 0 * * */5"
+cron. syncDlrInvFactorySch:  "0 9 * * 1,3,5"
+cron. invDumpFrFacMem:  "0 5 * * 1,3,5"
+cron. invDumpFrFacNonMem:  "0 6 * * */5"
+cron.syncDlrToFactorySch:  "0 3 * * */5"
 identityServerAuth: YWRtaW46YWRtaW4=
 
 
