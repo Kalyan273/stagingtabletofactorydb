@@ -51,7 +51,7 @@ public class EInventoryVehicles extends TransactionEntity{
     private String sellerType;
     private String inventoryType;
     private String source;
-    private Boolean inTransit;
+    private Boolean inTransit=Boolean.FALSE;
     private String availabilityStatus;
 
     //dealer this mkDealerID

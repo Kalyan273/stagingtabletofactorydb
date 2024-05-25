@@ -102,7 +102,7 @@ public class DealerRegistration extends Response {
     private String dealerPic;
 
 /*    @NotNull*/
-    private Boolean dealerLicense;
+    private Boolean dealerLicense = Boolean.FALSE;
 
 /*    @Size(max = 30,message = "length must be less than equal to 30 characters")
     @NotNull*/

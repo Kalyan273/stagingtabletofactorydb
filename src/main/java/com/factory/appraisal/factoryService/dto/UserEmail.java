@@ -11,5 +11,5 @@ import lombok.*;
 public class UserEmail {
     private String type;
     private String value;
-    private Boolean primary;
+    private Boolean primary = Boolean.FALSE;
 }

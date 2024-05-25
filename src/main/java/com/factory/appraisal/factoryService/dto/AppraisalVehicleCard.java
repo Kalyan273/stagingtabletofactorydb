@@ -36,7 +36,7 @@ public class AppraisalVehicleCard {
     private Long vehicleMileage;
     private String  vehicleSeries;
     private String offerStatus;
-    private Boolean isVehicleFav;
+    private Boolean isVehicleFav = Boolean.FALSE;
     private String createdOn;
     private String modifiedOn;
     private Long apprRef;
@@ -48,16 +48,16 @@ public class AppraisalVehicleCard {
     private String vinNumber;
     private String style;
     private String invntrySts;
-    private Boolean isHold;
+    private Boolean isHold = Boolean.FALSE;
     private Boolean field1 =Boolean.FALSE;
     private Boolean field2=Boolean.FALSE;
-    private Boolean isOfferMade=false;
+    private Boolean isOfferMade= Boolean.FALSE;
     private ConfigDropDown titleSts;
     private Status status;
-    private Boolean isSold=false;
+    private Boolean isSold= Boolean.FALSE;
 
     private Long shipmentId;
-    private Boolean buyerAgreed;
-    private Boolean sellerAgreed;
+    private Boolean buyerAgreed= Boolean.FALSE;
+    private Boolean sellerAgreed= Boolean.FALSE;
     private Role role;     //newly added
 }

@@ -13,8 +13,8 @@ import java.util.UUID;
 @ToString
 public class Shipment {
 
-    private Boolean buyerAgreed=false;
-    private Boolean sellerAgreed=false;
+    private Boolean buyerAgreed= Boolean.FALSE;
+    private Boolean sellerAgreed= Boolean.FALSE;
     private String buyerSign;
     private String sellerSign;
     private UUID buyerUserId;
