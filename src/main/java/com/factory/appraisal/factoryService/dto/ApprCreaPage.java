@@ -128,7 +128,7 @@ public class ApprCreaPage extends Response {
 
     //Appraisal test Drive Sts
 
-    private Boolean externalDmgSts;
+    private Boolean externalDmgSts =false;
 
     //AppraisalTestDriveSts
     @Size(max = 3,message = "frDrSideDmgSts must be less than equal to equal to 3 characters")
@@ -155,7 +155,7 @@ public class ApprCreaPage extends Response {
     private String frPassenSideDmgTxtBox;
     @Size(max = 50,message = "frPassenSideDmgPic must be less than equal to equal to 50 characters")
     private String frPassenSideDmgPic;
-    private Boolean paintWork;
+    private Boolean paintWork=false;
     @Size(max = 3,message = "frDrSidePntWrkSts must be less than equal to equal to 3 characters")
     private String frDrSidePntWrkSts;
     @Size(max = 100,message = "frDrSidePntWrkTxtBox must be less than equal to equal to 50 characters")
@@ -191,7 +191,7 @@ public class ApprCreaPage extends Response {
     @Size(max = 10,message = "keyAssureYes must be less than equal to equal to 10 characters")
     private String keyAssureYes;
 
-    private Boolean subscribToKeyAssure;
+    private Boolean subscribToKeyAssure=false;
     //@NotNull
     @Size(max = 50,message = "keyAssureFiles must be less than equal to equal to 50 characters")
     private String keyAssureFiles;
@@ -275,7 +275,7 @@ public class ApprCreaPage extends Response {
     @DecimalMax(value = "9999999999999.99",message = "value must be less than 13 digits")
     private Double delrRetlAskPrice;
 
-    private Boolean pushForBuyFig;
+    private Boolean pushForBuyFig=false;
 
     //prestart measurement
     private PrestartMeasurement preStartMeas;
